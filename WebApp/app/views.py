@@ -29,11 +29,11 @@ def app_regist():
             if user.name==request.form['username']:
                 app.logger.error("user use a username existed")
                 return jsonify(resp)
-        new_user =models.User(name=request.form['username'],gender='Male', email="http-test", password=request.form['password'] ,trader=False )
+            random_email=''.join(random.sample(['z','y','x','w','v','u','t','s','r','q','p','o','n','m','l','k','j','i','h','g','f','e','d','c','b','a'], 10))
+        new_user =models.User(name=request.form['username'],gender='Male', email=random_email, password=request.form['password'] ,trader=False )
         db.session.add(new_user)
         db.session.commit()
-        return jsonify(resp)
-    return jsonify(resp1)
+        return jsonify(resp1)
 
 @app.route('/appnet/login', methods=['GET', 'POST'])  
 def app_regist():
