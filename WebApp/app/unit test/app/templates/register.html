@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="example">
+
+  <a  href="\main" style='color:rgb(195, 70, 30); text-decoration: none;'>
+  <button id='col'>Homepage</button>
+  </a>
+  {%if trader%}
+  <a  href="\create" style='color:rgb(195, 70, 30); text-decoration: none;'>
+  <button id='col'>Add new task</button>
+  </a>
+  {%endif%}
+  {%if trader%}
+  <a  href="\goodcontrol" style='color:rgb(195, 70, 30); text-decoration: none;'>
+  <button >good control</button>
+  </a>
+  {%endif%}
+  {%if not trader%}
+  <a  href="\goodlist" style='color:rgb(195, 70, 30); text-decoration: none;'>
+  <button >good control</button>
+  </a>
+  {%endif%}
+  <a  href="\search" style='color:rgb(195, 70, 30); text-decoration: none;'>
+  <button id='col'>search your tasks</button>
+  </a>
+  <a  href="\login" style='color:rgb(195, 70, 30); text-decoration: none;'>
+  <button >log in</button>
+  </a>
+</div>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <ul>
+  {% for message in messages %}
+      <li>{{ message }} </li>
+  {% endfor %}
+  </ul>
+{% endif %}
+{% endwith %}
+<h1>Regist</h1>
+<form action="" method="post" name="calculator">
+    {{ form.hidden_tag() }}
+    <p>{{ form.name.label }}</p>
+    <p>
+       {{ form.name }}<br>
+    </p>
+    {% if error1 %}
+    <p style="color: red;">{{ error1 }}</p>
+    {% endif %}
+
+    {% for message in form.name.errors %}
+    {{ message }}
+    {% endfor %}
+
+    <div style="position:absolute;left:45%">{{ form.gender.label }}
+      <div style="position: relative;left:0%;text-align:left">
+      <p>{{ form.gender }}</p>
+      <div style="position: relative;left:20%;">
+      {% for message in form.gender.errors %}
+      <span style="color: red;">{{ message }}</span><br>
+      {% endfor %}
+      </div>
+      </div>
+    </div><br><br><br><br><br><br>
+    <div style="position:absolute;left:45%">{{ form.trader.label }}
+      <div style="position: relative;left:0%;text-align:left">
+      <p>{{ form.trader }}</p>
+      <div style="position: relative;left:20%;">
+      {% for message in form.gender.errors %}
+      <span style="color: red;">{{ message }}</span><br>
+      {% endfor %}
+      </div>
+      </div>
+    </div><br><br><br><br><br><br>
+
+    <p>{{ form.email.label }}</p>
+    <p>{{ form.email }}</p><br>
+    {% if error2 %}
+    <p style="color: red;">{{ error2 }}</p>
+    {% endif %}
+
+    <p>{{ form.password.label }}</p>
+    <p>{{ form.password }}</p><br>
+
+    {% for message in form.email.errors %}
+    {{ message }}
+    {% endfor %}
+    <p><input type="submit" value="regist"></p>
+</form>
+{% endblock %}

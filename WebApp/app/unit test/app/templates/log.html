@@ -1,0 +1,124 @@
+<html>
+<head>
+
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+
+<script>
+
+function test(obj)
+{
+var i=obj.getAttribute("id");
+
+   if(obj.innerHTML=='saled'){
+  obj.innerHTML='not saled';
+
+  obj.style.color='rgba(129, 87, 46, 0.75)';
+}
+else if(obj.innerHTML=='not saled'){
+  obj.innerHTML='saled';
+  obj.style.color='blue';
+}
+
+};
+
+
+function test4()
+{
+document.getElementById("d2").style.visibility="hidden";
+
+};
+function test5(obj)
+{
+document.getElementById("d2").style.visibility="visible";
+$.ajax({
+   url: '/respond3',
+   type: 'POST',
+   data: JSON.stringify({ response: obj.getAttribute("id") }),
+   contentType: "application/json; charset=utf-8",
+   dataType: "json",
+   success: function(response){
+     var pp=String(response.response);
+     var arr=pp.split(' ');
+    document.getElementById("tasks").value=arr[0];
+    document.getElementById("dead").value=arr[1];
+    document.getElementById("texts").innerHTML=arr[2];
+   },
+error: function(error){
+console.log(error);
+}
+});
+
+};
+
+</script>
+
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+  <div id='picid'>
+        <img src="{{ url_for('static', filename='image/page.jpg') }}" width="100%" height="100%" />
+  </div>
+<a  href="\main" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button>Homepage</button>
+</a>
+<a  href="\create" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >Add new task</button>
+</a>
+<a  href="\search" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >search your tasks</button>
+</a>
+{%if trader%}
+<a  href="\goodcontrol" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >good control</button>
+</a>
+{%endif%}
+{%if not trader%}
+<a  href="\goodlist" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >good control</button>
+</a>
+{%endif%}
+<a  href="\" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >regist</button>
+</a>
+<a  href="\login" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >log in</button>
+</a>
+<br><br>
+<div id=d1>
+<table  cellpadding="20">
+   <thead>
+      <tr>
+        <th>id</th>
+        <th>good id</th>
+        <th>user id</th>
+        <th>action</th>
+        <th>time</th>
+
+      </tr>
+   </thead>
+
+   <tbody>
+      {% for p in Users %}
+         <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.goodid }}</td>
+
+             <td>{{ p.userid }}</td>
+             <td>{{ p.action }}</td>
+<td>{{ p.time}}</td>
+         </tr>
+      {% endfor %}
+   </tbody>
+</table>
+</div>
+
+
+
+
+</body>
+</html>

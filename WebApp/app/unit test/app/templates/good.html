@@ -1,0 +1,149 @@
+<html>
+<head>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+</script>
+
+<script>
+
+function test(obj)
+{
+var i=obj.getAttribute("id");
+$.ajax({
+   url: '/respond2',
+   type: 'POST',
+   data: JSON.stringify({ response: obj.getAttribute("id") }),
+   contentType: "application/json; charset=utf-8",
+   dataType: "json",
+   success: function(response){
+   if(obj.innerHTML=='finished'){
+  obj.innerHTML='unfinished';
+
+  obj.style.color='rgba(129, 87, 46, 0.75)';
+}
+else if(obj.innerHTML=='unfinished'){
+  obj.innerHTML='finished';
+  obj.style.color='blue';
+}},
+error: function(error){
+console.log(error);
+}
+});
+};
+
+
+function test4()
+{
+document.getElementById("d2").style.visibility="hidden";
+
+};
+function test5(obj)
+{
+document.getElementById("d2").style.visibility="visible";
+$.ajax({
+   url: '/respond3',
+   type: 'POST',
+   data: JSON.stringify({ response: obj.getAttribute("id") }),
+   contentType: "application/json; charset=utf-8",
+   dataType: "json",
+   success: function(response){
+     var pp=String(response.response);
+     var arr=pp.split(' ');
+    document.getElementById("tasks").value=arr[0];
+    document.getElementById("dead").value=arr[1];
+    document.getElementById("texts").innerHTML=arr[2];
+   },
+error: function(error){
+console.log(error);
+}
+});
+
+};
+
+</script>
+
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+  <div style="position:absolute;z-index:-1;width:100%;height:100%;">
+      	<img src="{{ url_for('static', filename='image/star3.jpg') }}" width="100%" height="100%" />
+  </div>
+<button style='background-color:rgba(111, 133, 221, 0.65)'>Todo-list</button>
+
+<a  href="\create" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >Add new task</button>
+</a>
+<a  href="\finished" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >Completed tasks</button>
+</a>
+<a  href="\unfinished" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >Unfinished tasks</button>
+</a>
+<a  href="\search" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >search your tasks</button>
+</a>
+<a  href="\" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >regist</button>
+</a>
+<a  href="\login" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >log in</button>
+</a>
+<br><br>
+<div id=d1>
+<table cellspacing='0' border="1" cellpadding="0">
+   <thead>
+      <tr>
+        <th>Task</th>
+        <th>Start date</th>
+         <th>Deadline</th>
+
+
+
+      </tr>
+   </thead>
+
+   <tbody>
+      {% for p in Users %}
+         <tr>
+            <td>{{ p.task }}</td>
+            <td>{{ p.start_date }}</td>
+            <td>{{ p.deadline }}</td>
+
+            {% if p.finish==None %}
+            <td><button style='color:rgba(129, 87, 46, 0.75)' id={{p.id}} onclick='test(this)'>{{'unfinished'}}</button></td>
+            {% elif p.finish==False %}
+            <td><button style='color:rgba(129, 87, 46, 0.75)' id={{p.id}} onclick='test(this)'>{{'unfinished'}}</button></td>
+            {% elif p.finish==True %}
+            <td><button style='color:blue' id={{p.id}} onclick='test(this)'>{{'finished'}}</button></td>
+            {% endif %}
+            <td><button onclick='test5(this)' id={{p.id}}>details</button></td>
+         </tr>
+      {% endfor %}
+   </tbody>
+</table>
+</div>
+<div id=d2>
+
+  <p><em>task name:   <input type="text" class='ds' id='tasks'></em></p>
+  <p><em>deadline:&ensp;&ensp;<input type="text" class='ds' id='dead'></em></p>
+  <p style='position:relative'><em style='position:absolute'>Description:</em><em></em><textarea rows="10"cols='50'class='ds' id='texts'></textarea></p><br>
+  <button style='left:10%;position:absolute;top:90%' onclick='test4()'>confirm</button><button style='left:70%;position:absolute;top:90%' onclick='test4()'>cancel</button>
+
+</div>
+
+
+{% if message %}
+<P style="color:blue">{{ message }}</p>
+{% endif %}
+<br><br>
+{% if id %}
+<p style='color:rgba(30, 157, 168, 0.78)'>{{'user : '+id }}<P>
+{% endif %}
+<a  href="\delete" style='color:rgb(195, 70, 30); text-decoration: none;'>
+<button >delete all</button>
+</a>
+</body>
+</html>
