@@ -3,6 +3,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -37,7 +38,7 @@ import okhttp3.*;
 
 public class Login_page_activity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String Tag="Main_activity";
+    public static final String Tag="Login_page_activity";
     private EditText inputAccount;
     private EditText inputPassword;
     private Button loginButton;
@@ -47,8 +48,8 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page_layout);
-        loginButton=findViewById(R.id.login);
-        registerButton=findViewById(R.id.register);
+        loginButton=findViewById(R.id.loginButton);
+        registerButton=findViewById(R.id.registerButton);
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
         inputAccount=findViewById(R.id.account_input_text);
@@ -62,39 +63,64 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
 
         switch (v.getId())
         {
-            case R.id.login:
+            case R.id.loginButton:
                 if(account.equals("")||passWord.equals(""))
                 {
                     showToast("账号或密码不能为空！");
                     return;
                 }
+                OkHttpClient client = new OkHttpClient();
+                FormBody.Builder formBuilder = new FormBody.Builder();
+                formBuilder.add("username", account);
+                formBuilder.add("password", passWord);
+                Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/login").post(formBuilder.build()).build();
+                final Call call = client.newCall(request);
+                call.enqueue(new Callback()
+                {
+                    @Override
+                    public void onFailure(Call call, final IOException e)
+                    {
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run() {
+                                showToast("无法连接网络！");
+                            }
+                        });
+                    }
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException
+                    {
+                        final String res = response.body().string();
+                        runOnUiThread(new Runnable()
 
+                        {
 
-                show_user_name_warn("");
-                show_password_warn("");
-                User user_login_info=new User();
-                user_login_info.name=userName;
-                user_login_info.password=passWord;
-                user_login_info.url="http://nightmaremlp.pythonanywhere.com/appnet/login";
-                user_login_info.mode= "log_in";
-                user_login_info.setProgessDialog(loading_dialog);
-                registeNameWordToServer(user_login_info);
+                            @Override
+
+                            public void run()
+
+                            {
+                                try {
+                                    JSONObject res_inform = new JSONObject(res);
+                                    String message = res_inform.getString("message");
+                                    String error_code = res_inform.getString("error_code");
+                                    showToast(message);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        });
+                    }
+                });
                 break;
-            case R.id.register:
-                show_user_name_warn("");
-                show_password_warn("");
-                User user_register_info=new User();
-                user_register_info.name=userName;
-                user_register_info.password=passWord;
-                user_register_info.url="http://nightmaremlp.pythonanywhere.com/appnet/register";
-                user_register_info.mode= "register";
-                user_register_info.setProgessDialog(loading_dialog);
-                registeNameWordToServer(user_register_info);
+            case R.id.registerButton:
+                Intent intent = new Intent(Login_page_activity.this,Register_page_activity.class);
+                startActivity(intent);
                 break;
         }
     }
-
-
 
     private void showToast(String str) {
         Toast.makeText(Login_page_activity.this,str,Toast.LENGTH_SHORT).show();

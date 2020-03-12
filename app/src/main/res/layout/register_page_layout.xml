@@ -62,14 +62,14 @@
         android:layout_gravity="center"
         android:maxLines="1" />
     <Button
-        android:id="@+id/login"
+        android:id="@+id/registerButton"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:text="确定" />
     <Button
-        android:id="@+id/register"
+        android:id="@+id/returnButton"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
