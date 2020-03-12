@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -101,8 +103,6 @@ public class Main_page_activity extends AppCompatActivity {
 
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
-        //Log.d("test","ok");
-        //db.execSQL("insert into User values(?,?,?,?,?)",new Object[] { null, null, null,null,1 });
         Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
         if(cursor.getCount()==0)
             Toast.makeText(this,"没有用户登录！",Toast.LENGTH_SHORT).show();
@@ -111,7 +111,8 @@ public class Main_page_activity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
-    {  menu.clear();
+    {
+        menu.clear();
         getMenuInflater().inflate(R.menu.main_page_menu,menu);
         MenuItem menuItem = menu.findItem(R.id.app_bar_search);
         mSearchView = (SearchView) menuItem.getActionView();//加载searchview
@@ -123,10 +124,16 @@ public class Main_page_activity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item)
     {
         switch (item.getItemId()) {
-
             case R.id.app_bar_user:
-                Log.d("okhttp_error","user clicked");//设置通往用户界面按钮功能
-                ;
+                SQLiteDatabase db = androidDatabase.getWritableDatabase();
+                Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
+                if(cursor.getCount()==0)
+                {
+                    Intent intent = new Intent(Main_page_activity.this,Login_page_activity.class);
+                    startActivity(intent);
+                }
+                else
+                    Toast.makeText(this,"用户已登录！",Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -163,7 +170,6 @@ public class Main_page_activity extends AppCompatActivity {
     }
 
     private void init() {
-
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);        //设置布局管理器为2列，纵向
         //StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         GridLayoutManager mLayoutManager = new GridLayoutManager(Main_page_activity.this, 1);
@@ -278,5 +284,13 @@ public class Main_page_activity extends AppCompatActivity {
         return list;
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        SQLiteDatabase db = androidDatabase.getWritableDatabase();
+        ContentValues value = new ContentValues();
+        value.put("Islogin",0);
+        db.update("User",value,"Islogin=?", new String[]{"1"});
+    }
 }
 

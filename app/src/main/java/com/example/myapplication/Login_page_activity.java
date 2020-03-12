@@ -3,7 +3,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -43,6 +46,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
     private EditText inputPassword;
     private Button loginButton;
     private Button registerButton;
+    private AndroidDatabase androidDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +58,14 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
         registerButton.setOnClickListener(this);
         inputAccount=findViewById(R.id.account_input_text);
         inputPassword=findViewById(R.id.password_input_text);
+
+        androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
     }
 
     @Override
     public void onClick(View v) {
-        String account = inputAccount.getText().toString();
-        String passWord = inputPassword.getText().toString();
+        final String account = inputAccount.getText().toString();
+        final String passWord = inputPassword.getText().toString();
 
         switch (v.getId())
         {
@@ -93,24 +99,32 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                     {
                         final String res = response.body().string();
                         runOnUiThread(new Runnable()
-
                         {
-
                             @Override
-
                             public void run()
-
                             {
                                 try {
                                     JSONObject res_inform = new JSONObject(res);
                                     String message = res_inform.getString("message");
                                     String error_code = res_inform.getString("error_code");
                                     showToast(message);
+                                    if(error_code.equals("2"))
+                                    {
+                                        SQLiteDatabase db = androidDatabase.getWritableDatabase();
+                                        Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
+                                        if(cursor.getCount()==0)
+                                            db.execSQL("insert into User values(?,?,?,?,?,?)",new Object[] { null, account, passWord,null,null,1 });
+                                        else{
+                                            ContentValues value = new ContentValues();
+                                            value.put("Islogin",1);
+                                            db.update("User",value,"Username=?", new String[]{account});
+                                        }
+                                        finish();
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
-
                         });
                     }
                 });
