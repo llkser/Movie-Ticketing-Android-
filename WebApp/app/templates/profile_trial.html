@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/static/print.css">
+    <title>Individual Profile</title>
+</head>
+<body>
+
+{%for user in users%}
+
+<br>
+  <img src="../static/images/{{user.avatar}}" width="300" height="200"><br>
+  Username: {{user.user_name}}<br>
+  Gender: {{user.gender}}<br>
+  Age: {{user.age}}<br>
+  Mail-address: {{user.mail}}<br>
+  Phone-number: {{user.phone_number}}<br>
+  Vip-level: {{user.user_vip_level}}<br>
+<br>
+
+{%endfor%}
+
+</body>
+</html>

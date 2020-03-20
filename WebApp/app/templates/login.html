@@ -1,47 +1,37 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
 {% block content %}
-<h1>Log in</h1>
-<form action="" method="post" name="calculator">
-    {{ form.hidden_tag() }}
-    <p>{{ form.name.label }}</p>
-    <p>
-       {{ form.name }}<br>
-    </p>
-    {% if error1 %}
-    <p style="color: red;">{{ error1 }}</p>
-    {% endif %}
+    <h1>LOGIN</h1>
+<br>
 
-    {% for message in form.name.errors %}
-    {{ message }}
-    {% endfor %}
+<div class="login-form">
 
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}<br>
+            {% for error in form.email.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <br>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}<br>
+            {% for error in form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </p>
+        <br>
+        <p>
+            <input type="submit" value="LOGIN NOW">
+        </p>
+        <br>
+        <p>
+            HAS NO ACCOUNT？<a href="/register">HIT HERE!</a>
+        </p>
+    </form>
+</div>
 
-
-    <p>{{ form.email.label }}</p>
-    <p>{{ form.email }}</p><br>
-    {% if error2 %}
-    <p style="color: red;">{{ error2 }}</p>
-    {% endif %}
-
-    {% for message in form.email.errors %}
-    {{ message }}
-    {% endfor %}
-
-    <p>{{ form.password.label }}</p>
-    <p>{{ form.password }}</p><br>
-    {% if error3 %}
-    <p style="color: red;">{{ error3 }}</p>
-    {% endif %}
-    <div style="position:absolute;left:45%">{{ form.remember.label }}
-      <div style="position: relative;left:0%;text-align:left">
-      <p>{{ form.remember }}</p>
-      <div style="position: relative;left:20%;">
-      {% for message in form.remember.errors %}
-      <span style="color: red;">{{ message }}</span><br>
-      {% endfor %}
-      </div>
-      </div>
-    </div><br><br><br><br><br><br>
-    <p><input type="submit" value="log in"></p>
-</form>
 {% endblock %}

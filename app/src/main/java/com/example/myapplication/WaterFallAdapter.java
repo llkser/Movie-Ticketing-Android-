@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.LinearGradient;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -10,9 +12,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -36,10 +45,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
+
 public class WaterFallAdapter extends RecyclerView.Adapter {
     private Context mContext;
-    private List<Adapater_common_type> mData;
-
+    public List<Adapater_common_type> mData;
+    Recycler_banner_Holder banner_holder;
+    RecyclerBanner pager;
     public WaterFallAdapter(Context context, List<Adapater_common_type> data) {
         mContext = context;
         mData = data;
@@ -73,22 +85,39 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MovieCardViewHolder) {
             MovieCardViewHolder movie_holder = (MovieCardViewHolder) holder;
-            Movie_card movie_card = (Movie_card) mData.get(position);
+            final Movie_card movie_card = (Movie_card) mData.get(position);
             //savePhoto(movie_card.img_url);
             Uri uri = Uri.parse(movie_card.img_url);
-            movie_holder.userAvatar.setImageURI(uri);
-            movie_holder.userAvatar.getLayoutParams().height = movie_card.imgHeight;
-            movie_holder.userName.setText(movie_card.name);
+            Log.d("okhttp_error", movie_card.img_url);
+            movie_holder.Movie_img.setImageURI(uri);
+            movie_holder.Movie_img.getLayoutParams().height = 400;
+            movie_holder.Movie_name.setText(movie_card.name);
+            movie_holder.movie_length.setText("length :"+movie_card.length);
+            movie_holder.movie_actors.setText("Actors :"+movie_card.actors);
+            movie_holder.movie_release_data.setText("Premiere_date :"+movie_card.release_data);
+            movie_holder.movie_score.setText(movie_card.score+"/10");
+            movie_holder.movie_type.setText(movie_card.special_effect);
+
+            movie_holder.Movie_info.setOnClickListener(new View.OnClickListener() {
+
+                public void onClick(View v) {
+                    String movie_name=movie_card.name;
+                    Intent intent=new Intent(mContext,MovieInfo_page_activity.class);
+                    intent.putExtra("movie_name",movie_name);
+                    mContext.startActivity(intent);
+                }
+            });
+
         }
         else
         {
-            Recycler_banner_Holder banner_holder=(Recycler_banner_Holder)holder;
+            banner_holder=(Recycler_banner_Holder)holder;
 
             Adapter_recycler_banner banner = (Adapter_recycler_banner) mData.get(position);
             banner.init();
-            banner_holder.pager.isPlaying=true;
-            banner_holder.pager.setDatas(banner.urls);
-            banner_holder.pager.setOnPagerClickListener(new RecyclerBanner.OnPagerClickListener() {
+            pager.isPlaying=true;
+            pager.setDatas(banner.urls);
+            pager.setOnPagerClickListener(new RecyclerBanner.OnPagerClickListener() {
                 @Override
                 public void onClick(RecyclerBanner.BannerEntity entity) {
                 }
@@ -96,6 +125,7 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
             });
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -107,12 +137,26 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
 
 
     public class MovieCardViewHolder extends RecyclerView.ViewHolder {
-        public SimpleDraweeView userAvatar;
-        public TextView userName;
+        public SimpleDraweeView Movie_img;
+        public TextView Movie_name;
+        public TextView movie_release_data;
+        public TextView movie_length;
+        public TextView movie_score;
+        public TextView movie_type;
+        public TextView movie_actors;
+
+        public LinearLayout Movie_info;
+
         public MovieCardViewHolder(View itemView) {
             super(itemView);
-            userAvatar = (SimpleDraweeView) itemView.findViewById(R.id.movie_img);
-            userName = (TextView) itemView.findViewById(R.id.movie_name);
+            Movie_img = (SimpleDraweeView) itemView.findViewById(R.id.movie_img);
+            Movie_name = (TextView) itemView.findViewById(R.id.movie_name);
+            movie_release_data=(TextView) itemView.findViewById(R.id.movie_release_date);
+            movie_length=(TextView) itemView.findViewById(R.id.movie_length);
+            movie_score=(TextView) itemView.findViewById(R.id.movie_score);
+            movie_type=(TextView) itemView.findViewById(R.id.movie_type);
+            movie_actors=(TextView) itemView.findViewById(R.id.movie_actor);
+            Movie_info=(LinearLayout)itemView.findViewById(R.id.movie_info_card);
         }
     }
 
@@ -123,7 +167,6 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
     }
 
     public class Recycler_banner_Holder extends RecyclerView.ViewHolder {
-        RecyclerBanner pager;
         public Recycler_banner_Holder(View itemView) {
             super(itemView);
             pager = (RecyclerBanner) itemView.findViewById(R.id.recycler_banner_pics);
@@ -178,4 +221,22 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
         }
     }
 
+    public void removeList(int position){
+        mData.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
+    }
+
+    public void removeAll() {
+        int i = mData.size();
+
+        for (int position = 0; position < i; position++)
+        {
+
+           // pager.setVisibility();
+            mData.remove(0);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, getItemCount());
+        }
+    }
 }

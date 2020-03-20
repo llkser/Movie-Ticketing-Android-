@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 
 import android.view.Gravity;
@@ -16,6 +17,7 @@ import android.view.View;
 
 import android.widget.Button;
 
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import android.widget.TextView;
@@ -44,6 +46,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
     public static final String Tag="Login_page_activity";
     private EditText inputAccount;
     private EditText inputPassword;
+    private CheckBox passIsRemembered;
     private Button loginButton;
     private Button registerButton;
     private AndroidDatabase androidDatabase;
@@ -58,14 +61,31 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
         registerButton.setOnClickListener(this);
         inputAccount=findViewById(R.id.account_input_text);
         inputPassword=findViewById(R.id.password_input_text);
+        passIsRemembered=findViewById(R.id.remember_pass);
+        inputPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
+        SQLiteDatabase db = androidDatabase.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from User where PasswordIsRemembered=?",new String[]{"1"});
+        if(cursor.moveToFirst())
+        {
+            String account = cursor.getString(cursor.getColumnIndex("Username"));
+            String password = cursor.getString(cursor.getColumnIndex("Password"));
+            inputAccount.setText(account);
+            inputPassword.setText(password);
+            passIsRemembered.setChecked(true);
+        }
     }
 
     @Override
     public void onClick(View v) {
         final String account = inputAccount.getText().toString();
         final String passWord = inputPassword.getText().toString();
+        final int passRemembered;
+        if(passIsRemembered.isChecked())
+            passRemembered=1;
+        else
+            passRemembered=0;
 
         switch (v.getId())
         {
@@ -113,9 +133,16 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                                         SQLiteDatabase db = androidDatabase.getWritableDatabase();
                                         Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
                                         if(cursor.getCount()==0)
-                                            db.execSQL("insert into User values(?,?,?,?,?,?)",new Object[] { null, account, passWord,null,null,1 });
+                                            db.execSQL("insert into User values(?,?,?,?,?,?)",new Object[] { null, account, passWord,null,passRemembered,1 });
                                         else{
                                             ContentValues value = new ContentValues();
+                                            if(passRemembered==1)
+                                            {
+                                                value.put("PasswordIsRemembered",0);
+                                                db.update("User",value,"PasswordIsRemembered=?", new String[]{"1"});
+                                                value.clear();
+                                            }
+                                            value.put("PasswordIsRemembered",passRemembered);
                                             value.put("Islogin",1);
                                             db.update("User",value,"Username=?", new String[]{account});
                                         }

@@ -6,11 +6,11 @@
     tools:ignore="MissingDefaultResource">
 
     <ImageView
-        android:layout_width="187dp"
-        android:layout_height="169dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_gravity="center"
-        android:layout_marginVertical="30dp"
-        android:src="@mipmap/shield" />
+        android:layout_marginVertical="20dp"
+        android:src="@drawable/shield" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Images</title>
+</head>
+<body>
+    {%for movie in movies%}
+    {{movie.movie_name}}
+        <img src="../static/images/{{movie.poster}}" width="200" height="300">
+    {%endfor%}
+</body>
+</html>

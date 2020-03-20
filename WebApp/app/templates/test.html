@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+    <p>we have {{users_number}} users</p>
+    {%for user in users%}
+        {{user.user_name}}
+    {%endfor%}
+    <p>we have {{movies_number}} movies</p>
+    {%for movie in movies%}
+        {{movie.movie_name}}
+    {%endfor%}
+</body>
+</html>

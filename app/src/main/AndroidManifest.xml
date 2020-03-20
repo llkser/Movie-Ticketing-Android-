@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.myapplication">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -16,13 +16,21 @@
         android:icon="@mipmap/shield"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/security"
+        android:roundIcon="@mipmap/shield"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Register_page_activity"></activity>
-        <activity android:name=".Login_page_activity"></activity>
+        <activity
+            android:name=".Scene_page_activity"
+            android:theme="@style/new_AppTheme"/>
+        <activity android:name=".Register_page_activity" />
+        <activity android:name=".Login_page_activity" />
+        <activity
+            android:name=".MovieInfo_page_activity"
+            android:theme="@style/AppTheme.ActionBar.Transparent" />
         <activity android:name=".Main_page_activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

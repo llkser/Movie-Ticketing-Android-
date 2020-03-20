@@ -22,7 +22,9 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public interface Adapater_common_type{
+
     public int get_widget_type();
 }
 
@@ -31,7 +33,7 @@ final class Movie_card implements Adapater_common_type,Serializable {
     public String img_url;
     public String name;
     public String score;
-    public String type;
+    public String special_effect;
     public String length;
     public String release_data;
     public String actors;
@@ -61,41 +63,62 @@ final class Adapter_recycler_banner implements Adapater_common_type,Serializable
     int i;
 
     public List<RecyclerBanner.BannerEntity> urls = new ArrayList<>();
-
     public void init()
     {
-        urls.add(new Entity("http://pic.szjal.cn/img/a49210ffdb7a6a7b1c4561295dfcb540.jpg"));
-        urls.add(new Entity("http://pic.szjal.cn/img/023d29650c1969a6046216744d15ca3b.jpg"));
-        urls.add(new Entity("http://pic.szjal.cn/img/18e82508237055e6b990143baf1ae8cf.jpg"));
-        urls.add(new Entity("http://pic.szjal.cn/img/3f4103f3fe93ba41f6ac4fc6c5a64486.jpg"));
+       if(urls.size()!=5) {
+           urls.add(new Entity("http://nightmaremlp.pythonanywhere.com/img/iron_man.png"));
+            urls.add(new Entity("http://pic.szjal.cn/img/a49210ffdb7a6a7b1c4561295dfcb540.jpg"));
+
+            urls.add(new Entity("http://pic.szjal.cn/img/023d29650c1969a6046216744d15ca3b.jpg"));
+
+            urls.add(new Entity("http://pic.szjal.cn/img/18e82508237055e6b990143baf1ae8cf.jpg"));
+
+            urls.add(new Entity("http://pic.szjal.cn/img/3f4103f3fe93ba41f6ac4fc6c5a64486.jpg"));
+        }
     }
 
     public void update(View v) {
         i++;
         urls.clear();
         if (i % 2 == 0) {
+
+
             urls.add(new Entity("http://pic.szjal.cn/img/a49210ffdb7a6a7b1c4561295dfcb540.jpg"));
+
             urls.add(new Entity("http://pic.szjal.cn/img/023d29650c1969a6046216744d15ca3b.jpg"));
+
             urls.add(new Entity("http://pic.szjal.cn/img/18e82508237055e6b990143baf1ae8cf.jpg"));
+
             urls.add(new Entity("http://pic.szjal.cn/img/3f4103f3fe93ba41f6ac4fc6c5a64486.jpg"));
+
         } else {
+
             urls.add(new Entity("http://pic.szjal.cn/img/53f1886c0494f09d39c9ad146a9f5aaf.jpg"));
+
             urls.add(new Entity("http://pic.szjal.cn/img/18e82508237055e6b990143baf1ae8cf.jpg"));
+
             urls.add(new Entity("http://pic.szjal.cn/img/a49210ffdb7a6a7b1c4561295dfcb540.jpg"));
+
         }
         long t = System.currentTimeMillis();
     }
 
     private class Entity implements RecyclerBanner.BannerEntity {
         String url;
+
         public Entity(String url) {
+
             this.url = url;
+
         }
 
         @Override
         public String getUrl() {
+
             return url;
+
         }
+
     }
 }
 
