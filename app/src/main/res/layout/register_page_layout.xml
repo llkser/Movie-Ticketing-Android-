@@ -5,19 +5,18 @@
     android:layout_height="match_parent"
     tools:ignore="MissingDefaultResource">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="60dp"
-        android:textSize="24sp"
-        android:text="注册" />
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/user" />
     <TextView
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="账号："
+        android:text="Username："
         android:textSize="20sp" />
     <EditText
         android:id="@+id/account_input_text"
@@ -29,7 +28,7 @@
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="密码："
+        android:text="Password："
         android:textSize="20sp" />
     <EditText
         android:id="@+id/password_input_text"
@@ -41,7 +40,7 @@
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="确认密码："
+        android:text="Confirm password："
         android:textSize="20sp" />
     <EditText
         android:id="@+id/re_password_input_text"
@@ -53,7 +52,7 @@
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="邮箱："
+        android:text="Email："
         android:textSize="20sp" />
     <EditText
         android:id="@+id/email_input_text"
@@ -66,8 +65,8 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:text="确定" />
+        android:layout_marginTop="30dp"
+        android:text="Confirm" />
     <Button
         android:id="@+id/returnButton"
         android:layout_width="100dp"
@@ -75,7 +74,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:textColor="#66000000"
-        android:text="返回"
+        android:text="Back"
         style="?android:attr/borderlessButtonStyle" />
 
 </LinearLayout>

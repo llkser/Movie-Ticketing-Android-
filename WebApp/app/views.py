@@ -158,19 +158,18 @@ def list():
 def app_regist():
     resp = {
                 "error_code": 0,
-                "message": "User name already exists"
+                "message": "User name already exists!"
                 }
     resp1={
                 "error_code": 2,
-                "message": "registering successfully"
+                "message": "Register successfully!"
                 }
     if request.form['username'] and request.form['password']:
-        for user in models.User.query.all():
+        for user in User.query.all():
             if user.user_name==request.form['username']:
-                app.logger.error("user use a username existed")
+                app.logger.error("User used a existing username!")
                 return jsonify(resp)
-            random_email=random.sample('zyxwvutsrqponmlkjihgfedcba',5)
-        new_user =models.User(name=request.form['username'],gender='Male', email=random_email, password=request.form['password'] ,trader=False )
+        new_user = User(user_name=request.form['username'], mail=request.form['email'], password=request.form['password'] )
         db.session.add(new_user)
         db.session.commit()
         return jsonify(resp1)
@@ -180,20 +179,25 @@ def app_regist():
 def app_login():
     resp = {
                 "error_code": 0,
-                "message": "No such user name"
+                "message": "No such user name!"
                 }
     resp1={
                 "error_code": 1,
-                "message": "wrong password"
-                }
-    resp2={
-                "error_code": 2,
-                "message": "log in successfully"
+                "message": "Wrong password!"
                 }
     if request.form['username'] and request.form['password']:
         for user in User.query.all():
             if user.user_name==request.form['username']:
                 if user.password==request.form['password']:
+                    resp2={
+                        "error_code": 2,
+                        "message": "Log in successfully!",
+                        "gender": user.gender,
+                        "email": user.mail,
+                        "phonenumber": user.phone_number,
+                        "age": user.age,
+                        "vip_level": user.user_vip_level
+                    }
                     return jsonify(resp2)
                 else:
                     return jsonify(resp1)

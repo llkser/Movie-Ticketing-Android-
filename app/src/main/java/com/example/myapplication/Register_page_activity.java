@@ -1,10 +1,12 @@
 package com.example.myapplication;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +49,10 @@ public class Register_page_activity extends AppCompatActivity implements View.On
         returnButton=findViewById(R.id.returnButton);
         registerButton.setOnClickListener(this);
         returnButton.setOnClickListener(this);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("User Register");
     }
 
     @Override
@@ -61,18 +67,19 @@ public class Register_page_activity extends AppCompatActivity implements View.On
             case R.id.registerButton:
                 if(account.equals("")||passWord.equals(""))
                 {
-                    showToast("账号或密码不能为空！");
+                    showToast("Username or password can't be empty！");
                     return;
                 }
                 else if(!passWord.equals(rePassWord))
                 {
-                    showToast("两次密码输入需相同!");
+                    showToast("Confirm password not the same!");
                     return;
                 }
                 OkHttpClient client = new OkHttpClient();
                 FormBody.Builder formBuilder = new FormBody.Builder();
                 formBuilder.add("username", account);
                 formBuilder.add("password", passWord);
+                formBuilder.add("email", email);
                 Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/register").post(formBuilder.build()).build();
                 final Call call = client.newCall(request);
                 call.enqueue(new Callback()
@@ -84,7 +91,7 @@ public class Register_page_activity extends AppCompatActivity implements View.On
                         {
                             @Override
                             public void run() {
-                                showToast("无法连接网络！");
+                                showToast("Can't connect to networks！");
                             }
                         });
                     }
@@ -106,6 +113,8 @@ public class Register_page_activity extends AppCompatActivity implements View.On
                                     String message = res_inform.getString("message");
                                     String error_code = res_inform.getString("error_code");
                                     showToast(message);
+                                    if(error_code.equals("2"))
+                                        finish();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -118,6 +127,17 @@ public class Register_page_activity extends AppCompatActivity implements View.On
             case R.id.returnButton:
                 finish();
                 break;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

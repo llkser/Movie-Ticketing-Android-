@@ -86,8 +86,6 @@ public class Main_page_activity extends AppCompatActivity  {
         }
     }
 
-
-
     androidx.appcompat.widget.Toolbar toolbar;
     SearchView mSearchView;
     WaterFallAdapter mAdapter;
@@ -108,10 +106,9 @@ public class Main_page_activity extends AppCompatActivity  {
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
 
-
         Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
         if(cursor.getCount()==0)
-            Toast.makeText(this,"没有用户登录！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No user login!",Toast.LENGTH_SHORT).show();
         RequestForMovieInform(0) ;
     }
 
@@ -138,7 +135,10 @@ public class Main_page_activity extends AppCompatActivity  {
                     startActivity(intent);
                 }
                 else
-                    Toast.makeText(this,"用户已登录！",Toast.LENGTH_SHORT).show();
+                {
+                    Intent intent = new Intent(Main_page_activity.this,User_page_activity.class);
+                    startActivity(intent);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -254,7 +254,6 @@ public class Main_page_activity extends AppCompatActivity  {
 
                     });
                 }
-
 
                 @Override
                 public void onResponse(Call call, final Response response) throws IOException {

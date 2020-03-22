@@ -1,4 +1,5 @@
 package com.example.myapplication;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -13,6 +14,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.Button;
@@ -64,6 +66,10 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
         passIsRemembered=findViewById(R.id.remember_pass);
         inputPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("User Login");
+
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from User where PasswordIsRemembered=?",new String[]{"1"});
@@ -92,7 +98,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
             case R.id.loginButton:
                 if(account.equals("")||passWord.equals(""))
                 {
-                    showToast("账号或密码不能为空！");
+                    showToast("Username or password can't be empty！");
                     return;
                 }
                 OkHttpClient client = new OkHttpClient();
@@ -110,7 +116,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                         {
                             @Override
                             public void run() {
-                                showToast("无法连接网络！");
+                                showToast("Can not connect to networks！");
                             }
                         });
                     }
@@ -130,10 +136,26 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                                     showToast(message);
                                     if(error_code.equals("2"))
                                     {
+                                        String gender = res_inform.getString("gender");
+                                        String email = res_inform.getString("email");
+                                        String phonenumber = res_inform.getString("phonenumber");
+                                        String age = res_inform.getString("age");
+                                        String vip_level = res_inform.getString("vip_level");
+
                                         SQLiteDatabase db = androidDatabase.getWritableDatabase();
                                         Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
                                         if(cursor.getCount()==0)
-                                            db.execSQL("insert into User values(?,?,?,?,?,?)",new Object[] { null, account, passWord,null,passRemembered,1 });
+                                            db.execSQL("insert into User values(?,?,?,?,?,?,?,?,?,?)",new Object[] {
+                                                    null,
+                                                    account,
+                                                    passWord,
+                                                    email,
+                                                    gender,
+                                                    age,
+                                                    phonenumber,
+                                                    vip_level,
+                                                    passRemembered,
+                                                    1 });
                                         else{
                                             ContentValues value = new ContentValues();
                                             if(passRemembered==1)
@@ -142,6 +164,11 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                                                 db.update("User",value,"PasswordIsRemembered=?", new String[]{"1"});
                                                 value.clear();
                                             }
+                                            value.put("Email",email);
+                                            value.put("Gender",gender);
+                                            value.put("Age",age);
+                                            value.put("Phonenumber",phonenumber);
+                                            value.put("Vip_level",vip_level);
                                             value.put("PasswordIsRemembered",passRemembered);
                                             value.put("Islogin",1);
                                             db.update("User",value,"Username=?", new String[]{account});
@@ -165,6 +192,17 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
 
     private void showToast(String str) {
         Toast.makeText(Login_page_activity.this,str,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

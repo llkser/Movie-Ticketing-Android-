@@ -17,7 +17,12 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowActionBarOverlay">true</item>
         <item name="colorPrimary">#77091818</item>
+    </style>
 
+    <style name="AppTheme.ActionBar.Userpage.Transparent" parent="new_AppTheme">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="colorPrimary">#A7CCF5</item>
     </style>
 
     <style name="customtitlebar" parent="android:Theme.Holo.Light">
@@ -25,8 +30,6 @@
     </style>
 
     <style name="AppTheme.ActionBar" parent="AppTheme">
-
-
 
     <item name="windowActionBarOverlay">false</item>
     <item name="colorPrimary">@color/colorPrimaryDark</item></style>

@@ -10,6 +10,10 @@ public class AndroidDatabase extends SQLiteOpenHelper {
             "Username text, " +
             "Password text, " +
             "Email text, " +
+            "Gender text, " +
+            "Age text, " +
+            "Phonenumber text, " +
+            "Vip_level text, " +
             "PasswordIsRemembered integer, " +
             "Islogin integer default 0) ";
 

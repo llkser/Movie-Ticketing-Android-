@@ -26,8 +26,6 @@ class User(UserMixin, db.Model):
     user_vip_level = db.Column(db.Integer)
     orders = db.relationship('Order', backref='users', lazy='dynamic')
 
-
-
     def is_authenticated(self):
         return True
 
