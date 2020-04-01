@@ -191,18 +191,24 @@ def app_login():
                 if user.password==request.form['password']:
                     resp2={
                         "error_code": 2,
-                        "message": "Log in successfully!",
-                        "gender": user.gender,
-                        "email": user.mail,
-                        "phonenumber": user.phone_number,
-                        "age": user.age,
-                        "vip_level": user.user_vip_level
+                        "message": "Log in successfully!"
                     }
                     return jsonify(resp2)
                 else:
                     return jsonify(resp1)
         return jsonify(resp)
 
+@app.route('/appnet/get_profile', methods=['GET', 'POST'])  
+def app_get_profile():
+    if request.form['username']:
+        user=User.query.filter(User.user_name==request.form['username']).first()
+        resp={
+            "gender": user.gender,
+            "age": user.age,
+            "email": user.mail,
+            "phonenumber": user.phone_number
+        }
+        return jsonify(resp)
   
 @app.route('/img/<img_name>', methods=['GET', 'POST'])  #input the image name as url, then this function would return the image
 def get_img(img_name):

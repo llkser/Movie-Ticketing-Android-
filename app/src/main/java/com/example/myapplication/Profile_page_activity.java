@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +15,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class Profile_page_activity extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,11 +54,53 @@ public class Profile_page_activity extends AppCompatActivity implements View.OnC
 
         if(cursor.moveToFirst())
         {
-            username.setText(cursor.getString(cursor.getColumnIndex("Username"))+" ");
-            gender.setText(cursor.getString(cursor.getColumnIndex("Gender"))+" ");
-            age.setText(cursor.getString(cursor.getColumnIndex("Age"))+" ");
-            email.setText(cursor.getString(cursor.getColumnIndex("Email"))+" ");
-            phonenumber.setText(cursor.getString(cursor.getColumnIndex("Phonenumber"))+" ");
+            String user_name=cursor.getString(cursor.getColumnIndex("Username"));
+            username.setText(user_name+" ");
+
+            OkHttpClient client = new OkHttpClient();
+            FormBody.Builder formBuilder = new FormBody.Builder();
+            formBuilder.add("username", user_name);
+            Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_profile").post(formBuilder.build()).build();
+            final Call call = client.newCall(request);
+            call.enqueue(new Callback()
+            {
+                @Override
+                public void onFailure(Call call, final IOException e)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run() {
+                            showToast("Can not connect to networks！");
+                        }
+                    });
+                }
+                @Override
+                public void onResponse(Call call, final Response response) throws IOException
+                {
+                    final String res = response.body().string();
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try {
+                                JSONObject res_inform = new JSONObject(res);
+                                String gender_text = res_inform.getString("gender");
+                                String age_text = res_inform.getString("age");
+                                String email_text = res_inform.getString("email");
+                                String phonenumber_text = res_inform.getString("phonenumber");
+                                gender.setText(gender_text+" ");
+                                age.setText(age_text+" ");
+                                email.setText(email_text+" ");
+                                phonenumber.setText(phonenumber_text+" ");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
         }
 
         ActionBar actionBar = getSupportActionBar();

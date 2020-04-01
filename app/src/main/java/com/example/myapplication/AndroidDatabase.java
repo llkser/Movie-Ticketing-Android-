@@ -8,12 +8,6 @@ public class AndroidDatabase extends SQLiteOpenHelper {
     public static final String CREATE_USER_TABLE="create table User (" +
             "id integer primary key autoincrement, " +
             "Username text, " +
-            "Password text, " +
-            "Email text, " +
-            "Gender text, " +
-            "Age text, " +
-            "Phonenumber text, " +
-            "Vip_level text, " +
             "PasswordIsRemembered integer, " +
             "Islogin integer default 0) ";
 
@@ -38,7 +32,6 @@ public class AndroidDatabase extends SQLiteOpenHelper {
             "cinemas text,"+
             "img_url text,"+
             "score text)";
-
 
     private Context mContext;
 

@@ -76,9 +76,8 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
         if(cursor.moveToFirst())
         {
             String account = cursor.getString(cursor.getColumnIndex("Username"));
-            String password = cursor.getString(cursor.getColumnIndex("Password"));
             inputAccount.setText(account);
-            inputPassword.setText(password);
+            inputPassword.setText("password");
             passIsRemembered.setChecked(true);
         }
     }
@@ -100,6 +99,18 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                 {
                     showToast("Username or password can't be empty！");
                     return;
+                }
+                if(passRemembered==1)
+                {
+                    SQLiteDatabase db = androidDatabase.getWritableDatabase();
+                    Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
+                    if(cursor.moveToFirst()&&cursor.getInt(cursor.getColumnIndex("PasswordIsRemembered"))==1&&passWord.equals("password"))
+                    {
+                        ContentValues value = new ContentValues();
+                        value.put("Islogin",1);
+                        db.update("User",value,"Username=?", new String[]{account});
+                        finish();
+                    }
                 }
                 OkHttpClient client = new OkHttpClient();
                 FormBody.Builder formBuilder = new FormBody.Builder();
@@ -136,24 +147,12 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                                     showToast(message);
                                     if(error_code.equals("2"))
                                     {
-                                        String gender = res_inform.getString("gender");
-                                        String email = res_inform.getString("email");
-                                        String phonenumber = res_inform.getString("phonenumber");
-                                        String age = res_inform.getString("age");
-                                        String vip_level = res_inform.getString("vip_level");
-
                                         SQLiteDatabase db = androidDatabase.getWritableDatabase();
                                         Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
                                         if(cursor.getCount()==0)
-                                            db.execSQL("insert into User values(?,?,?,?,?,?,?,?,?,?)",new Object[] {
+                                            db.execSQL("insert into User values(?,?,?,?)",new Object[] {
                                                     null,
                                                     account,
-                                                    passWord,
-                                                    email,
-                                                    gender,
-                                                    age,
-                                                    phonenumber,
-                                                    vip_level,
                                                     passRemembered,
                                                     1 });
                                         else{
@@ -164,11 +163,6 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                                                 db.update("User",value,"PasswordIsRemembered=?", new String[]{"1"});
                                                 value.clear();
                                             }
-                                            value.put("Email",email);
-                                            value.put("Gender",gender);
-                                            value.put("Age",age);
-                                            value.put("Phonenumber",phonenumber);
-                                            value.put("Vip_level",vip_level);
                                             value.put("PasswordIsRemembered",passRemembered);
                                             value.put("Islogin",1);
                                             db.update("User",value,"Username=?", new String[]{account});

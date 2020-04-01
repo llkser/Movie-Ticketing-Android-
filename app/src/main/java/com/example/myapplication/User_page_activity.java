@@ -39,7 +39,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
     private TextView vip_level;
     private Button profile;
     private Button tickets;
-    private Button history;
+    private Button membership;
     private Button settings;
     private Button support;
     private Button logout;
@@ -54,13 +54,13 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
         vip_level=findViewById(R.id.vip_level);
         profile=findViewById(R.id.profile);
         tickets=findViewById(R.id.tickets);
-        history=findViewById(R.id.history);
-        settings=findViewById(R.id.history);
+        membership=findViewById(R.id.membership);
+        settings=findViewById(R.id.settings);
         support=findViewById((R.id.support));
         logout=findViewById(R.id.logout);
         profile.setOnClickListener(this);
         tickets.setOnClickListener(this);
-        history.setOnClickListener(this);
+        membership.setOnClickListener(this);
         settings.setOnClickListener(this);
         support.setOnClickListener(this);
         logout.setOnClickListener(this);

@@ -114,7 +114,8 @@ public class Main_page_activity extends AppCompatActivity  {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
-    {  menu.clear();
+    {
+        menu.clear();
         getMenuInflater().inflate(R.menu.main_page_menu,menu);
         MenuItem menuItem = menu.findItem(R.id.app_bar_search);
         mSearchView = (SearchView) menuItem.getActionView();//加载searchview
@@ -320,14 +321,11 @@ public class Main_page_activity extends AppCompatActivity  {
                                             mAdapter.notifyItemChanged(mAdapter.mData.size());
                                             mAdapter.notifyItemRangeChanged(mAdapter.mData.size(),1);
                                         }
-
                                     }
                                     while(cursor.moveToNext());
-
                                 }
                                 if (mode == 0)
                                 init(list);
-
                                 Log.d("okhttp_error", "end of thread");
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -336,22 +334,15 @@ public class Main_page_activity extends AppCompatActivity  {
                         }
 
                     });
-
                 }
-
             });
-
-
         return list;
-
     }
 
     private List<Adapater_common_type> search_from_database(String keyword)
     {
         final List<Adapater_common_type> list = new ArrayList<>();
-
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
-
 
         Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 group by movie_name   --case-insensitive", new String[]{keyword});
         if(keyword=="")
@@ -374,8 +365,6 @@ public class Main_page_activity extends AppCompatActivity  {
                 }
                 else
                     list.add(movie_card);
-
-
             }
             while(cursor.moveToNext());
         }
