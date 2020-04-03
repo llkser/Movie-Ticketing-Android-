@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 app.send_file_max_age_default = timedelta(seconds=1)
@@ -15,5 +16,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 # Handles all migrations.
 migrate = Migrate(app, db)
+bootstrap = Bootstrap(app)
 
 from app import views, models

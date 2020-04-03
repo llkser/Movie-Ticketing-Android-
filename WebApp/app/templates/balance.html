@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<html>
+<head>
+<title>balance</title>
+</head>
+<body>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+    <div class="page-header">
+        <h1>Top up!</h1><br>
+        <p>You have {{money}} in your account now</p>
+    </div>
+    {{ wtf.quick_form(form) }}
+    </div>
+    <div class="col-md-4"></div>
+</body>
+<br><br><br><br><br>
+<br><br><br><br><br>
+<br><br><br><br><br>
+
+{% endblock %}

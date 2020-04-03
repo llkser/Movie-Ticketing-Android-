@@ -100,6 +100,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                     showToast("Username or password can't be empty！");
                     return;
                 }
+                boolean flag=true;
                 if(passRemembered==1)
                 {
                     SQLiteDatabase db = androidDatabase.getWritableDatabase();
@@ -108,74 +109,81 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                     {
                         ContentValues value = new ContentValues();
                         value.put("Islogin",1);
+                        value.put("PasswordIsRemembered",passRemembered);
                         db.update("User",value,"Username=?", new String[]{account});
-                        finish();
+                        showToast("Log in successfully!");
+                        flag=false;
                     }
                 }
-                OkHttpClient client = new OkHttpClient();
-                FormBody.Builder formBuilder = new FormBody.Builder();
-                formBuilder.add("username", account);
-                formBuilder.add("password", passWord);
-                Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/login").post(formBuilder.build()).build();
-                final Call call = client.newCall(request);
-                call.enqueue(new Callback()
+                if(flag)
                 {
-                    @Override
-                    public void onFailure(Call call, final IOException e)
+                    OkHttpClient client = new OkHttpClient();
+                    FormBody.Builder formBuilder = new FormBody.Builder();
+                    formBuilder.add("username", account);
+                    formBuilder.add("password", passWord);
+                    Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/login").post(formBuilder.build()).build();
+                    final Call call = client.newCall(request);
+                    call.enqueue(new Callback()
                     {
-                        runOnUiThread(new Runnable()
+                        @Override
+                        public void onFailure(Call call, final IOException e)
                         {
-                            @Override
-                            public void run() {
-                                showToast("Can not connect to networks！");
-                            }
-                        });
-                    }
-                    @Override
-                    public void onResponse(Call call, final Response response) throws IOException
-                    {
-                        final String res = response.body().string();
-                        runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
+                            runOnUiThread(new Runnable()
                             {
-                                try {
-                                    JSONObject res_inform = new JSONObject(res);
-                                    String message = res_inform.getString("message");
-                                    String error_code = res_inform.getString("error_code");
-                                    showToast(message);
-                                    if(error_code.equals("2"))
-                                    {
-                                        SQLiteDatabase db = androidDatabase.getWritableDatabase();
-                                        Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
-                                        if(cursor.getCount()==0)
-                                            db.execSQL("insert into User values(?,?,?,?)",new Object[] {
-                                                    null,
-                                                    account,
-                                                    passRemembered,
-                                                    1 });
-                                        else{
-                                            ContentValues value = new ContentValues();
-                                            if(passRemembered==1)
-                                            {
-                                                value.put("PasswordIsRemembered",0);
-                                                db.update("User",value,"PasswordIsRemembered=?", new String[]{"1"});
-                                                value.clear();
-                                            }
-                                            value.put("PasswordIsRemembered",passRemembered);
-                                            value.put("Islogin",1);
-                                            db.update("User",value,"Username=?", new String[]{account});
-                                        }
-                                        finish();
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                @Override
+                                public void run() {
+                                    showToast("Can not connect to networks！");
                                 }
-                            }
-                        });
-                    }
-                });
+                            });
+                        }
+                        @Override
+                        public void onResponse(Call call, final Response response) throws IOException
+                        {
+                            final String res = response.body().string();
+                            runOnUiThread(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    try {
+                                        JSONObject res_inform = new JSONObject(res);
+                                        String message = res_inform.getString("message");
+                                        String error_code = res_inform.getString("error_code");
+                                        showToast(message);
+                                        if(error_code.equals("2"))
+                                        {
+                                            SQLiteDatabase db = androidDatabase.getWritableDatabase();
+                                            Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
+                                            if(cursor.getCount()==0)
+                                                db.execSQL("insert into User values(?,?,?,?)",new Object[] {
+                                                        null,
+                                                        account,
+                                                        passRemembered,
+                                                        1 });
+                                            else{
+                                                ContentValues value = new ContentValues();
+                                                if(passRemembered==1)
+                                                {
+                                                    value.put("PasswordIsRemembered",0);
+                                                    db.update("User",value,"PasswordIsRemembered=?", new String[]{"1"});
+                                                    value.clear();
+                                                }
+                                                value.put("PasswordIsRemembered",passRemembered);
+                                                value.put("Islogin",1);
+                                                db.update("User",value,"Username=?", new String[]{account});
+                                            }
+                                            finish();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                else
+                    finish();
                 break;
             case R.id.registerButton:
                 Intent intent = new Intent(Login_page_activity.this,Register_page_activity.class);

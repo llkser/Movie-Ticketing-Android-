@@ -8,7 +8,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -90,7 +92,25 @@ public class Profile_page_activity extends AppCompatActivity implements View.OnC
                                 String age_text = res_inform.getString("age");
                                 String email_text = res_inform.getString("email");
                                 String phonenumber_text = res_inform.getString("phonenumber");
-                                gender.setText(gender_text+" ");
+                                String gender_html;
+                                if(gender_text.equals("null"))
+                                    gender.setText("null");
+                                else
+                                {
+                                    if(gender_text.equals("male"))
+                                        gender_html = "<img src='" + R.drawable.male + "'>";
+                                    else
+                                        gender_html = "<img src='" + R.drawable.female + "'>";
+                                    gender.setText(Html.fromHtml(gender_html, new Html.ImageGetter() {
+                                        @Override
+                                        public Drawable getDrawable(String source) {
+                                            int id = Integer.parseInt(source);
+                                            Drawable drawable = getResources().getDrawable(id, null);
+                                            drawable.setBounds(0, 0, 60 , 60);
+                                            return drawable;
+                                        }
+                                    }, null));
+                                }
                                 age.setText(age_text+" ");
                                 email.setText(email_text+" ");
                                 phonenumber.setText(phonenumber_text+" ");

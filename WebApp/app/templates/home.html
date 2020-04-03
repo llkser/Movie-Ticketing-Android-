@@ -1,37 +1,17 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 <html>
 <head>
 <title>Home</title>
-<!-- for-mobile-apps -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
-		function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- //for-mobile-apps -->
-<link href="/static/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-<!-- pop-up -->
-<link href="/static/css/popuo-box.css" rel="stylesheet" type="text/css" media="all" />
-<!-- //pop-up -->
-<link href="css/easy-responsive-tabs.css" rel='stylesheet' type='text/css'/>
-<link rel="stylesheet" type="text/css" href="/static/css/zoomslider.css" />
-<link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-<link href="/static/css/font-awesome.css" rel="stylesheet">
-<script type="text/javascript" src="/static/js/modernizr-2.6.2.min.js"></script>
-<!--/web-fonts-->
-<link href='http://fonts.googleapis.com/css?family=Tangerine:400,700' rel='stylesheet' type='text/css'>
-<link href="http://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900" rel="stylesheet">
-<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-<!--//web-fonts-->
-</head>
+
 <body>
 <!--/main-header-->
   <!--/banner-section-->
-	<div id="demo-1" data-zs-src='["/static/images/2.jpg", "/static/images/1.jpg", "/static/images/3.jpg","/static/images/4.jpg"]' data-zs-overlay="dots">
-		<div class="demo-inner-content">
+{% block navigation %}
+	<div id="demo-1" class="banner-inner">
+	 <div class="banner-inner-dott">
 		<!--/header-w3l-->
 			   <div class="header-w3-agileits" id="home">
-			     <div class="inner-header-agile">
+			     <div class="inner-header-agile part2">
 				<nav class="navbar navbar-default">
 					<div class="navbar-header">
 						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -40,23 +20,41 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<h1><a  href="index.html"><span>S</span>hi<span>E</span>ld</a></h1>
-					</div>
-					<!-- navbar-header -->
-					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-							<ul class="nav navbar-nav">
-						<li class="active"><a href="/">HOME</a></li>
-						<li><a href="/list">List</a></li>
-						<li><a href="/poster_upload">Upload</a></li>
+
+					<h1><a  href="/"><span>S</span>hi<span>E</span>ld</a></h1>
+				</div>
+				<!-- navbar-header -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+					<li class="active"><a href="/">HOME</a></li>
+
+						{% if current_user.is_authenticated %}
+							{% if current_user.mail == "944190546@qq.com" %}
+								<li><a href="/admin_list">List</a></li>
+								<li><a href="/poster_upload">Upload</a></li>
+							{% endif%}
+						{% else %}
+							<li><a href="/list">List</a></li>
+						{% endif %}
 						<li><a href="contact.html">APP-Download</a></li>
 						{% if current_user.is_authenticated %}
-       					 <li>  <a class="dropdown-toggle" href="{{url_for('profile',user_id=current_user.user_id)}}">Profile</a></li>
-      					{% endif %}
+						<li>  <a class="dropdown-toggle" href="{{url_for('profile',user_id=current_user.user_id)}}">Profile</a></li>
+						<li class="dropdown">
+                    		<a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<b class="caret"></b></a>
+                   			 <ul class="dropdown-menu">
+								<li><a href="/logout" >Logout</a></li>
+								<li><a href="/change_password" >Change Password</a></li>
+								<li><a href="{{url_for('balance',user_id=current_user.user_id)}}" >My Balance</a></li>
+                    		</ul>
+                    	</li>
+
+						{% else %}
 						<li><a href="/login" class="login" >Login</a></li>
 						<li><a href="/register" class="login reg" >Register</a></li>
+                        {% endif %}
 
 
-						</ul>
+					</ul>
 
 					</div>
 					<div class="clearfix"> </div>
@@ -68,8 +66,8 @@
 										</ul> <!-- cd-header-buttons -->
 									</div>
 									<div id="cd-search" class="cd-search">
-										<form action="#" method="post">
-											<input name="Search" type="search" placeholder="Search...">
+										<form action="/search" name="search" method="post">
+											<input  type="text" name="value" placeholder="Search users or movies (if you need ensure users or movies, use -u or -m)">
 										</form>
 									</div>
 								</div>
@@ -78,17 +76,10 @@
 
 			   </div>
 		<!--//header-w3l-->
-			<!--/banner-info-->
-			   <div class="baner-info">
-			      <h3>Latest <span>On</span>Line <span>Mo</span>vies</h3>
-				  <h4>In space no one can hear your scream.</h4>
-				  <a class="w3_play_icon1" href="#small-dialog1">
-											Watch Trailer
-										</a>
-			   </div>
-			<!--/banner-ingo-->
 		</div>
     </div>
+{% endblock %}
+{% block content %}
   <!--/banner-section-->
  <!--//main-header-->
 	         <!--/banner-bottom-->
@@ -101,17 +92,22 @@
 									<div class="single-agile-shar-buttons">
 									<ul>
 								<li>
-									<div class="fb-like" data-href="" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="false"></div>
-
 								</li>
-
-
 							</ul>
 								</div>
 						</div>
 				</div>
-			</div>
+			</div><br><br><br>
 			<!--//banner-bottom-->
+
+			{% if current_user.is_authenticated %}
+			<h3>Welcome back,
+				{% if current_user.mail == "944190546@qq.com" %}
+					Admin
+				{% endif %}
+				{{current_user.user_name}}
+			</h3>
+      		{% endif %}
 		<!-- //Modal1 -->
 			<!--/content-inner-section-->
 				<div class="w3_content_agilleinfo_inner">
@@ -163,7 +159,7 @@ A film by Abhinay Deo, Produced by Vipul Amrutlal Shah, JA entertainment Pvt. Lt
 										     <div class="col-md-7 wthree_agile-movies_list">
 												 {% for movie in movies %}
 														<div class="w3l-movie-gride-agile">
-															<a href="single.html" class="hvr-sweep-to-bottom"><img src="/static/images/{{movie.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
+															<a href="{{url_for('detail', movie_id=movie.movie_id) }}" class="hvr-sweep-to-bottom"><img src="/static/images/{{movie.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
 																<div class="w3l-action-icon"><i class="fa fa-play-circle-o" aria-hidden="true"></i></div>
 															</a>
 																<div class="mid-1 agileits_w3layouts_mid_1_home">
@@ -204,57 +200,12 @@ A film by Abhinay Deo, Produced by Vipul Amrutlal Shah, JA entertainment Pvt. Lt
 								</div>
 
 
-
-					<!--双格推荐部分结束-->
-				<!--//tab-section-->
-				  <h3 class="agile_w3_title"> LATEST <span>MOVIES</span></h3>
-			<!--/movies-->
- 					<div class="wthree_agile-requested-movies">
-						{% for movie in movies %}
-										<div class="col-md-2 w3l-movie-gride-agile requested-movies">
-															<a href="single.html" class="hvr-sweep-to-bottom"><img src="/static/images/{{movie.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
-																<div class="w3l-action-icon"><i class="fa fa-play-circle-o" aria-hidden="true"></i></div>
-															</a>
-																<div class="mid-1 agileits_w3layouts_mid_1_home">
-																	<div class="w3l-movie-text">
-																		<h6><a href="single.html">{{movie.movie_name}}</a></h6>
-																	</div>
-																	<div class="mid-2 agile_mid_2_home">
-																		<p>{{movie.premiere_date}}</p>
-																		<div class="block-stars">
-																			<ul class="w3l-ratings">
-																				<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
-																				<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
-																				<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-																				<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-																				<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-																			</ul>
-																		</div>
-																		<div class="clearfix"></div>
-																	</div>
-																</div>
-															<div class="ribben one">
-																<p>NEW</p>
-															</div>
-													</div>
-
-						{% endfor %}
-
-												<div class="clearfix"></div>
-											</div>
-
-				<!--//top-movies-->				<!--//movies-->
-
-
-
-
-
 				 <h3 class="agile_w3_title">RECOMMENDED <span>MOVIES</span> </h3>
 				<!--/requested-movies-->
 				     <div class="wthree_agile-requested-movies">
 {% for movie in movies %}
 										<div class="col-md-2 w3l-movie-gride-agile requested-movies">
-															<a href="single.html" class="hvr-sweep-to-bottom"><img src="/static/images/{{movie.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
+															<a href="{{url_for('detail', movie_id=movie.movie_id) }}" class="hvr-sweep-to-bottom"><img src="/static/images/{{movie.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
 																<div class="w3l-action-icon"><i class="fa fa-play-circle-o" aria-hidden="true"></i></div>
 															</a>
 																<div class="mid-1 agileits_w3layouts_mid_1_home">
@@ -288,84 +239,7 @@ A film by Abhinay Deo, Produced by Vipul Amrutlal Shah, JA entertainment Pvt. Lt
 			</div>
 		</div>
 			<!--//content-inner-section-->
-
-	<!--/footer-bottom-->
-		<div class="contact-w3ls" id="contact">
-			<div class="footer-w3lagile-inner">
-
-					<div class="footer-grids w3-agileits">
-
-
-
-							<div class="col-md-2 footer-grid">
-								<div class="clearfix"> </div>
-							</div>
-
-
-						</div>
-						<div class="col-md-2 footer-grid">
-
-
-							<div class="clearfix"> </div>
-						</div>
-						<div class="clearfix"> </div>
-					</div>
-					<h3 class="text-center follow">CONTECT<span> US</span></h3>
-						<ul class="social-icons1 agileinfo">
-							<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-							<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-							<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-							<li><a href="#"><i class="fa fa-youtube"></i></a></li>
-							<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-						</ul>
-
-			 </div>
-
-			</div>
-			<div class="w3agile_footer_copy">
-				    <p>SHIELD</p>
-			</div>
-		<a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
-
-	<script src="/static/js/jquery-1.11.1.min.js"></script>
-			<!-- Dropdown-Menu-JavaScript -->
-		<script src="/static/js/dropdown.js"></script>
-				<!-- //Dropdown-Menu-JavaScript -->
-
-
-		<script type="text/javascript" src="/static/js/jquery.zoomslider.min.js"></script>
-				<!-- search-jQuery -->
-						<script src="/static/js/main.js"></script>
-					<script src="/static/js/simplePlayer.js"></script>
-					<script src="/static/js/searcy.js"></script>
-
-					<!-- pop-up-box -->
-				<script src="/static/js/jquery.magnific-popup.js" type="text/javascript"></script>
-			<!--//pop-up-box -->
-
-					<div id="small-dialog1" class="mfp-hide">
-					<iframe src=""></iframe>
-			</div>
-			<div id="small-dialog2" class="mfp-hide">
-				<iframe src=""></iframe>
-			</div>
-			<script src="/static/js/aaa.js"></script>
-		<script src="/static/js/easy-responsive-tabs.js"></script>
-		<script src="/static/js/bbb.js"></script>
-		<link href="/static/css/owl.carousel.css" rel="stylesheet" type="text/css" media="all">
-		<script src="/static/js/owl.carousel.js"></script>
-		<script src="/static/js/ccc.js"></script>
-
-		<!--/script-->
-		<script type="text/javascript" src="/static/js/move-top.js"></script>
-		<script type="text/javascript" src="/static/js/easing.js"></script>
-
-		<script src="/static/js/ddd.js" type="text/javascript"></script>
-		 <script src="/static/js/eee.js" type="text/javascript"></script>
-		<!--end-smooth-scrolling-->
-			<script src="/static/js/bootstrap.js"></script>
-
-
-
+<br><br>
 </body>
 </html>
+{% endblock %}

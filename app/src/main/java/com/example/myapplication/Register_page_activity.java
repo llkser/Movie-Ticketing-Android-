@@ -35,7 +35,6 @@ public class Register_page_activity extends AppCompatActivity implements View.On
     private EditText reInputPassword;
     private EditText inputEmail;
     private Button registerButton;
-    private Button returnButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +45,7 @@ public class Register_page_activity extends AppCompatActivity implements View.On
         reInputPassword=findViewById(R.id.re_password_input_text);
         inputEmail=findViewById(R.id.email_input_text);
         registerButton=findViewById(R.id.registerButton);
-        returnButton=findViewById(R.id.returnButton);
         registerButton.setOnClickListener(this);
-        returnButton.setOnClickListener(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -123,9 +120,6 @@ public class Register_page_activity extends AppCompatActivity implements View.On
                         });
                     }
                 });
-                break;
-            case R.id.returnButton:
-                finish();
                 break;
         }
     }

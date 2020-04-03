@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% import "bootstrap/wtf.html" as wtf %}
 <html>
 <head lang="en">
     <!-- Introduce bootstrap framework and CSS files-->
@@ -7,6 +7,10 @@
     {% else %}
     <title>SHIELD</title>
     {% endif %}
+	<link href="/static/css/easy-responsive-tabs.css" rel='stylesheet' type='text/css'/>
+	<link rel="stylesheet" type="text/css" href="/static/css/zoomslider.css" />
+	<link rel="stylesheet" type="text/css" href="/static/css/table-style.css" />
+	<link rel="stylesheet" type="text/css" href="/static/css/basictable.css" />
 
     <!-- for-mobile-apps -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,6 +39,7 @@
 
 <!--/main-header-->
   <!--/banner-section-->
+{% block navigation %}
 	<div id="demo-1" class="banner-inner">
 	 <div class="banner-inner-dott">
 		<!--/header-w3l-->
@@ -49,82 +54,61 @@
 							<span class="icon-bar"></span>
 						</button>
 
-					<h1><a  href="index.html"><span>S</span>hi<span>E</span>ld</a></h1>
+					<h1><a  href="/"><span>S</span>hi<span>E</span>ld</a></h1>
 				</div>
 				<!-- navbar-header -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="nav navbar-nav">
-<li class="active"><a href="/">HOME</a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">LOCATION <b class="caret"></b></a>
-							<ul class="dropdown-menu multi-column columns-3">
-								<li>
-								<div class="col-sm-4">
-									<ul class="multi-column-dropdown">
-										<li><a href="genre.html">Chongqing</a></li>
-										<li><a href="genre.html">Chengdu</a></li>
-										<li><a href="genre.html">Beijing</a></li>
-										<li><a href="genre.html">Hangzhou</a></li>
-										<li><a href="horror.html">Hainan</a></li>
-										<li><a href="genre.html">Tianjing</a></li>
-										<li><a href="genre.html">Changsha</a></li>
-										<li><a href="genre.html">Nanjing</a></li>
-									</ul>
-								</div>
-								<div class="col-sm-4">
-									<ul class="multi-column-dropdown">
-										<li><a href="genre.html">Yunnan</a></li>
-										<li><a href="comedy.html">Shanxi</a></li>
-										<li><a href="genre.html">Wuhan</a></li>
-										<li><a href="genre.html">Dalian</a></li>
-										<li><a href="genre.html">Shanghai</a></li>
-									</ul>
-								</div>
-								<div class="col-sm-4">
-									<ul class="multi-column-dropdown">
-										<li><a href="genre.html">Heilongjiang</a></li>
-										<li><a href="genre.html">Guangzhou</a></li>
-										<li><a href="genre.html">Shenzhou</a></li>
-										<li><a href="genre.html">Zhujiang</a></li>
-										<li><a href="genre.html">Linyi</a></li>
-										<li><a href="genre.html">Suzhou</a></li>
-									</ul>
-								</div>
-								<div class="clearfix"></div>
-								</li>
-							</ul>
-						</li>
-						<li><a href="/list">List</a></li>
-						<li><a href="/poster_upload">Upload</a></li>
+					<li class="active"><a href="/">HOME</a></li>
+
+						{% if current_user.is_authenticated %}
+							{% if current_user.mail == "944190546@qq.com" %}
+								<li><a href="/admin_list">List</a></li>
+								<li><a href="/poster_upload">Upload</a></li>
+							{% endif%}
+						{%else%}
+							<li><a href="/list">List</a></li>
+						{% endif %}
 						<li><a href="contact.html">APP-Download</a></li>
+						{% if current_user.is_authenticated %}
+						<li>  <a class="dropdown-toggle" href="{{url_for('profile',user_id=current_user.user_id)}}">Profile</a></li>
+						<li class="dropdown">
+                    		<a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<b class="caret"></b></a>
+                   			 <ul class="dropdown-menu">
+								<li><a href="/logout" >Logout</a></li>
+								<li><a href="/change_password" >Change Password</a></li>
+								<li><a href="{{url_for('balance',user_id=current_user.user_id)}}" >My Balance</a></li>
+                    		</ul>
+                    	</li>
+
+						{% else %}
 						<li><a href="/login" class="login" >Login</a></li>
 						<li><a href="/register" class="login reg" >Register</a></li>
-
-
+                        {% endif %}
 					</ul>
 
 					</div>
 					<div class="clearfix"> </div>
 				</nav>
 					<div class="w3ls_search">
-									<div class="cd-main-header">
-										<ul class="cd-header-buttons">
-											<li><a class="cd-search-trigger" href="#cd-search"> <span></span></a></li>
-										</ul> <!-- cd-header-buttons -->
-									</div>
-									<div id="cd-search" class="cd-search">
-										<form action="#" method="post">
-											<input name="Search" type="search" placeholder="Search...">
-										</form>
-									</div>
-								</div>
-
+						<div class="cd-main-header">
+							<ul class="cd-header-buttons">
+								<li><a class="cd-search-trigger" href="#cd-search"> <span></span></a></li>
+							</ul> <!-- cd-header-buttons -->
+						</div>
+						<div id="cd-search" class="cd-search">
+							<form action="/search" name="search" method="post">
+								<input  type="text" name="value" placeholder="Search users or movies (if you need ensure users or movies, use -u or -m)">
+							</form>
+						</div>
+					</div>
 			</div>
 
 			   </div>
 		<!--//header-w3l-->
 		</div>
     </div>
+{% endblock %}
   <!--/banner-section-->
  <!--//main-header-->
 
@@ -168,7 +152,7 @@
 					</div>
 					<div class="clearfix"> </div>
 				</div>
-				<h3 class="text-center follow">CONTECT <span>US</span></h3>
+				<h3 class="text-center follow">CONTACT <span>US</span></h3>
 					<ul class="social-icons1 agileinfo">
 						<li><a href="#"><i class="fa fa-facebook"></i></a></li>
 						<li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -221,11 +205,5 @@
 		 <script src="/static/js/eee.js" type="text/javascript"></script>
 		<!--end-smooth-scrolling-->
 			<script src="/static/js/bootstrap.js"></script>
-
-
-
-
-
-
 </body>
 </html>

@@ -2,14 +2,15 @@ from flask_wtf import Form
 from wtforms import StringField, BooleanField, SelectField, PasswordField, \
     SubmitField, IntegerField, RadioField, TextAreaField
 from wtforms.fields.html5 import DateField, TimeField
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.validators import DataRequired, ValidationError, EqualTo, Length, Email
 from .models import User
 from sqlalchemy import or_,and_
 
-class LoginForm(Form):
-    email = StringField('email', render_kw={'placeholder': 'email'}, validators=[Email(message='Invalid mailbox format')])
-    password = StringField(render_kw={'placeholder': 'email'}, validators=[DataRequired()])
 
+class LoginForm(Form):
+    email = StringField('email', render_kw={'placeholder': 'email'}, validators=[DataRequired(message='The email cannot be empty'),Email(message='Invalid mailbox format')])
+    password = PasswordField(render_kw={'placeholder': 'password'}, validators=[DataRequired(message='The password cannot be empty')])
 
 class RegisterForm(Form):
     username = StringField('username', render_kw={'placeholder': 'username'},
@@ -17,14 +18,22 @@ class RegisterForm(Form):
     password = PasswordField('password', render_kw={'placeholder': 'password'},
                              validators=[DataRequired(message='The password cannot be empty'), Length(6, 32, message='password can only be between 6 and 32 characters')])
     password_confirm = PasswordField('password-confirm', validators=[EqualTo('password', message='The two passwords do not match')])
-    email = StringField('email', validators=[Email(message='Invalid mailbox format')])
+    email = StringField('email', render_kw={'placeholder': 'email'},
+                        validators=[DataRequired(message='The email cannot be empty'),
+                                    Email(message='Invalid mailbox format')])
     submit = SubmitField('Register now')
 
     def validate_username(self, username):
+        if not username.data.isalnum():
+            raise ValidationError('The user name must consist of numbers or alphabets')
         user = User.query.filter_by(user_name=username.data).first()
         if user is not None:
             raise ValidationError('The user name has been registered')
 
+    def validate_email(self, email):
+        user = User.query.filter_by(mail=email.data).first()
+        if user is not None:
+            raise ValidationError('The email has been registered')
 
 class ResetForm(Form):
     old_password = PasswordField('old_password', render_kw={'placeholder': 'old_password'},
@@ -46,6 +55,17 @@ def valid_login(email, password):
     else:
         return False
 
+class EditProfileForm(Form):
+    age = IntegerField('Age', validators=[DataRequired()])
+    gender = RadioField('Gender', choices=[('male', 'Male'), ('female', 'Female')], validators=[DataRequired()])
+    phone_number = StringField('Phone_number', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+    def validate_age(self, age):
+        if age.data <= 0:
+            raise ValidationError('Well, as an alive person, your age should larger than 0')
+
+
 # class UserInfoForm(Form):
 #     username = StringField('username', validators=[DataRequired()])
 #     avatar = FileField('avatar')
@@ -65,24 +85,34 @@ def valid_login(email, password):
 #     password = PasswordField('password',validators=[DataRequired(message='Please enter your password')])
 #     submit = SubmitField('login')
 #
-# class MovieInfoForm(Form):
-#     movie_name = StringField('movie name', validators=[DataRequired()])
-#     movie_type = StringField('movie type', validators=[DataRequired()])
-#     introduction = TextAreaField('introduction', validators=[Length(min=0, max=500)])
-#     movie_length = StringField('movie length', validators=[DataRequired()])
-#     premiere_date = DateField('premiere date', validators=[DataRequired()])
-#     special_effect = StringField('special effect', validators=[DataRequired()])
-#     comments = TextAreaField('comments', validators=[Length(min=0, max=120)])
-#     country = StringField('country', validators=[DataRequired()])
-#     actors = StringField('actors', validators=[DataRequired()])
-#     director = StringField('director', validators=[DataRequired()])
-#
-# class MovieDataForm(Form):
-#     date = DateField('date', validators=[DataRequired()])
-#     scene = IntegerField('scene', validators=[DataRequired()])
-#     start_time = TimeField('start time', validators=[DataRequired()])
-#     finish_time = TimeField('finish time', validators=[DataRequired()])
-#     projection_hall = IntegerField('projection hall', validators=[DataRequired()])
-#     price = IntegerField('price', validators=[DataRequired()])
-#     score = IntegerField('score', validators=[DataRequired()])
+class MovieInfoForm(Form):
+    movie_name = StringField('movie name', validators=[DataRequired()])
+    movie_type = StringField('movie type', validators=[DataRequired()])
+    introduction = TextAreaField('introduction', validators=[DataRequired(), Length(min=0, max=1000)])
+    movie_length = StringField('movie length', validators=[DataRequired()])
+    premiere_date = DateField('premiere date', render_kw={'placeholder': 'xxxx-xx-xx'}, validators=[DataRequired()])
+    special_effect = StringField('special effect', validators=[DataRequired()])
+    comments = TextAreaField('comments', validators=[DataRequired(), Length(min=0, max=1000)])
+    country = StringField('country', validators=[DataRequired()])
+    actors = StringField('actors', validators=[DataRequired()])
+    director = StringField('director', validators=[DataRequired()])
+    score = IntegerField('score', validators=[DataRequired(message='Score should be a integer')])
+    poster = FileField('poster', validators=[FileRequired(), FileAllowed(['png', 'jpg', 'JPG', 'PNG', 'bmp'])],
+                       render_kw={'accept': 'image/*'})
 
+class TopUpForm(Form):
+    number = IntegerField('Money', validators=[DataRequired()],
+                          render_kw={'placeholder': 'how much you want to top up'})
+    submit = SubmitField('Sure about top-up')
+
+    def validate_number(self, number):
+        if number.data <= 0:
+            raise ValidationError('Only positive integer top up is accepted')
+
+class MovieDataForm(Form):
+    date = DateField('date', render_kw={'placeholder': 'xxxx-xx-xx'}, validators=[DataRequired()])
+    scene = IntegerField('scene', validators=[DataRequired()])
+    start_time = TimeField('start time', render_kw={'placeholder': 'xx:xx:00'}, validators=[DataRequired()])
+    finish_time = TimeField('finish time', render_kw={'placeholder': 'xx:xx:00'}, validators=[DataRequired()])
+    projection_hall = IntegerField('projection hall', validators=[DataRequired()])
+    price = IntegerField('price', validators=[DataRequired()])

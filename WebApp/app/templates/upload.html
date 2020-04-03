@@ -1,143 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Contact</title>
-<!-- for-mobile-apps -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
-		function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- //for-mobile-apps -->
+{% extends 'base.html' %}
+{% block content %}
+<title>Upload New Movie</title>
 
-{%if allow== 1%}
-    <script>
-        function popInfo()
-        {
-            alert("Poster uploaded successfully !");
-        }
-    </script>
-{%endif%}
-{%if allow== 2%}
-    <script>
-        function popInfo()
-        {
-            alert("Poster upload failed !");
-        }
-    </script>
-{%endif%}
-<link href="../static/css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
-<!-- pop-up -->
-<link href="../static/css/popuo-box.css" rel="stylesheet" type="text/css" media="all" />
-<!-- //pop-up -->
-<link href="../static/css/easy-responsive-tabs.css" rel='stylesheet' type='text/css'/>
-<link rel="stylesheet" type="text/css" href="../static/css/zoomslider.css" />
-<link rel="stylesheet" type="text/css" href="../static/css/style.css" />
-<link href="../static/css/font-awesome.css" rel="stylesheet">
-<script type="text/javascript" src="../static/js/modernizr-2.6.2.min.js"></script>
-<!--/web-fonts-->
-<link href='http://fonts.googleapis.com/css?family=Tangerine:400,700' rel='stylesheet' type='text/css'>
-<link href="http://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900" rel="stylesheet">
-<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-<!--//web-fonts-->
-</head>
 <body>
-<!--/main-header-->
-  <!--/banner-section-->
-	<div id="demo-1" class="banner-inner">
-	 <div class="banner-inner-dott">
-		<!--/header-w3l-->
-			   <div class="header-w3-agileits" id="home">
-			     <div class="inner-header-agile part2">
-				<nav class="navbar navbar-default">
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<h1><a  href="index.html"><span>S</span>hi<span>E</span>ld</a></h1>
-					</div>
-					<!-- navbar-header -->
-					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-							<ul class="nav navbar-nav">
-				<li class="active"><a href="/">HOME</a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">LOCATION <b class="caret"></b></a>
-							<ul class="dropdown-menu multi-column columns-3">
-								<li>
-								<div class="col-sm-4">
-									<ul class="multi-column-dropdown">
-										<li><a href="genre.html">Chongqing</a></li>
-										<li><a href="genre.html">Chengdu</a></li>
-										<li><a href="genre.html">Beijing</a></li>
-										<li><a href="genre.html">Hangzhou</a></li>
-										<li><a href="horror.html">Hainan</a></li>
-										<li><a href="genre.html">Tianjing</a></li>
-										<li><a href="genre.html">Changsha</a></li>
-										<li><a href="genre.html">Nanjing</a></li>
-									</ul>
-								</div>
-								<div class="col-sm-4">
-									<ul class="multi-column-dropdown">
-										<li><a href="genre.html">Yunnan</a></li>
-										<li><a href="comedy.html">Shanxi</a></li>
-										<li><a href="genre.html">Wuhan</a></li>
-										<li><a href="genre.html">Dalian</a></li>
-										<li><a href="genre.html">Shanghai</a></li>
-									</ul>
-								</div>
-								<div class="col-sm-4">
-									<ul class="multi-column-dropdown">
-										<li><a href="genre.html">Heilongjiang</a></li>
-										<li><a href="genre.html">Guangzhou</a></li>
-										<li><a href="genre.html">Shenzhou</a></li>
-										<li><a href="genre.html">Zhujiang</a></li>
-										<li><a href="genre.html">Linyi</a></li>
-										<li><a href="genre.html">Suzhou</a></li>
-									</ul>
-								</div>
-								<div class="clearfix"></div>
-								</li>
-							</ul>
-						</li>
-						<li><a href="/list">List</a></li>
-						<li><a href="/poster_upload">Upload</a></li>
-						<li><a href="contact.html">APP-Download</a></li>
-						<li><a href="/login" class="login" >Login</a></li>
-						<li><a href="/register" class="login reg" >Register</a></li>
-
-
-						</ul>
-
-					</div>
-					<div class="clearfix"> </div>
-				</nav>
-					<div class="w3ls_search">
-									<div class="cd-main-header">
-										<ul class="cd-header-buttons">
-											<li><a class="cd-search-trigger" href="#cd-search"> <span></span></a></li>
-										</ul> <!-- cd-header-buttons -->
-									</div>
-									<div id="cd-search" class="cd-search">
-										<form action="#" method="post">
-											<input name="Search" type="search" placeholder="Search...">
-										</form>
-									</div>
-								</div>
-
-			</div>
-
-			   </div>
-		<!--//header-w3l-->
-		</div>
-    </div>
-  <!--/banner-section-->
- <!--//main-header-->
-
-
-						<!-- breadcrumb -->
 	<div class="w3_breadcrumb">
 		<div class="breadcrumb-inner">
 			<ul>
@@ -146,145 +11,98 @@
 			</ul>
 		</div>
 	</div>
-<!-- //breadcrumb -->
 			<!--/content-inner-section-->
-				<div class="w3_content_agilleinfo_inner">
-					<div class="agile_featured_movies">
-							<div class="inner-agile-w3l-part-head">
-					            <h3 class="w3l-inner-h-title">New movie</h3>
-								<p class="w3ls_head_para">Please fill in the movie information</p>
-							</div>
-						<div class="w3_mail_grids">
-								<form action="/upload_poster" enctype='multipart/form-data' method='POST'>
-									<div class="col-md-6 w3_agile_mail_grid">
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-25" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-25">
-												<span class="input__label-content input__label-content--ichiro">Movie name</span>
-											</label>
-										</span>
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-26" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-26">
-												<span class="input__label-content input__label-content--ichiro">Type</span>
-											</label>
-										</span>
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-27" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-27">
-												<span class="input__label-content input__label-content--ichiro">Length</span>
-											</label>
-										</span>
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-28" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-28">
-												<span class="input__label-content input__label-content--ichiro">The openning date</span>
-											</label>
-										</span>
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-29" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-29">
-												<span class="input__label-content input__label-content--ichiro">The special effects</span>
-											</label>
-										</span>
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-30" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-30">
-												<span class="input__label-content input__label-content--ichiro">Director</span>
-											</label>
-										</span>
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-31" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-31">
-												<span class="input__label-content input__label-content--ichiro">Starring</span>
-											</label>
-										</span>
-										<span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="text" id="input-32" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-32">
-												<span class="input__label-content input__label-content--ichiro">Rating</span>
-											</label>
-										</span>
-
-									</div>
-									<div class="col-md-6 w3_agile_mail_grid two">
-                                        <span class="input input--ichiro">
-											<input class="input__field input__field--ichiro" type="file" name="file" id="input-33" placeholder=" " required="">
-											<label class="input__label input__label--ichiro" for="input-33">
-												<span class="input__label-content input__label-content--ichiro">Upload poster</span>
-											</label>
-										</span>
-										<textarea name="Message" placeholder="The description" required=""></textarea>
-										<textarea name="Message" placeholder="The comments" required=""></textarea>
-										<input type="submit" onclick="popInfo()" value="Submit">
-									</div>
-									<div class="clearfix"> </div>
-								</form>
-
-					</div>
-					</div>
-				</div>
-			<!--//content-inner-section-->
-
-
-	<!--/footer-bottom-->
-
-			<div class="w3agile_footer_copy">
-				    <p>SHIELD</p>
+	<div class="w3_content_agilleinfo_inner">
+		<div class="agile_featured_movies">
+			<div class="inner-agile-w3l-part-head">
+				<h3 class="w3l-inner-h-title">New movie</h3>
+				<p class="w3ls_head_para">Please fill in the movie information</p>
 			</div>
-		<a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+			<div class="login-form">
+				<form action="/poster_upload" enctype='multipart/form-data' method='POST'>
+					{{ form.hidden_tag() }}
+					<div style="margin-left:5%;width:40%;float:left">
+						Movie name:<br>
+						{{ form.movie_name(cols='80',class_='form-control') }}<br>
+						{% for error in form.movie_name.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Movie type:<br>
+						{{ form.movie_type(cols='80',class_='form-control') }}<br>
+						{% for error in form.movie_type.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Length:<br>
+						{{ form.movie_length(cols='80',class_='form-control') }}<br>
+						{% for error in form.movie_length.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Country:<br>
+						{{ form.country(cols='80',class_='form-control') }}<br>
+						{% for error in form.country.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Premiere date:<br>
+						{{ form.premiere_date(cols='80',class_='form-control') }}<br>
+						{% for error in form.premiere_date.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Special effect:<br>
+						{{ form.special_effect(cols='80',class_='form-control') }}<br>
+						{% for error in form.special_effect.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Director:<br>
+						{{ form.director(cols='80',class_='form-control') }}<br>
+						{% for error in form.director.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
 
-<script src="../static/js/jquery-1.11.1.min.js"></script>
-	<!-- Dropdown-Menu-JavaScript -->
-			<script>
-				$(document).ready(function(){
-					$(".dropdown").hover(
-						function() {
-							$('.dropdown-menu', this).stop( true, true ).slideDown("fast");
-							$(this).toggleClass('open');
-						},
-						function() {
-							$('.dropdown-menu', this).stop( true, true ).slideUp("fast");
-							$(this).toggleClass('open');
-						}
-					);
-				});
-			</script>
-		<!-- //Dropdown-Menu-JavaScript -->
-		<!-- search-jQuery -->
-				<script src="../static/js/main.js"></script>
-			<!-- //search-jQuery -->
+					</div>
+					<div style="margin-right:5%;width:40%;float:right">
+						Actors:<br>
+						{{ form.actors(cols='80',class_='form-control') }}<br>
+						{% for error in form.actors.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Score:<br>
+						{{ form.score(cols='80',class_='form-control') }}<br>
+						{% for error in form.score.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Poster:<br>
+						{{ form.poster(cols='80',class_='form-control') }}<br>
+						{% for error in form.poster.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Introduction:<br>
+						{{ form.introduction(cols='80',rows='10',class_='form-control') }}<br>
+						{% for error in form.introduction.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						Comments:<br>
+						{{ form.comments(cols='80',rows='10',class_='form-control') }}<br>
+						{% for error in form.comments.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}<br>
+						<input type="submit"  value="Submit">
+					</div>
+					{% with messages = get_flashed_messages() %}
+						{% if messages %}
+							<ul class="flash">
+								{% for message in messages %}
+									<div class="alert alert-success" style="text-align: center">
+										<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+										<strong>{{ message }}</strong></div>
+								{% endfor %}
+							</ul>
+						{% endif %}
+					{% endwith %}
+					<div class="clearfix"> </div>
+				</form>
 
-
-<!--/script-->
-<script type="text/javascript" src="../static/js/move-top.js"></script>
-<script type="text/javascript" src="../static/js/easing.js"></script>
-
-<script type="text/javascript">
-			jQuery(document).ready(function($) {
-				$(".scroll").click(function(event){
-					event.preventDefault();
-					$('html,body').animate({scrollTop:$(this.hash).offset().top},900);
-				});
-			});
-</script>
- <script type="text/javascript">
-						$(document).ready(function() {
-							/*
-							var defaults = {
-					  			containerID: 'toTop', // fading element id
-								containerHoverID: 'toTopHover', // fading element hover id
-								scrollSpeed: 1200,
-								easingType: 'linear'
-					 		};
-							*/
-
-							$().UItoTop({ easingType: 'easeOutQuart' });
-
-						});
-					</script>
-<!--end-smooth-scrolling-->
-	<script src="../static/js/bootstrap.js"></script>
-
+		</div>
+		</div>
+	</div>
 </body>
-</html>
+{%endblock%}

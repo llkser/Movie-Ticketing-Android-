@@ -4,7 +4,8 @@ from sqlalchemy.sql.functions import user
 from werkzeug.exceptions import abort
 from flask_login import current_user, login_user, logout_user, LoginManager, login_required
 from app import app, db, admin, login_manager
-from .forms import LoginForm, RegisterForm, valid_login
+from .forms import LoginForm, RegisterForm, valid_login, EditProfileForm, MovieInfoForm, TopUpForm, MovieDataForm, \
+    ResetForm
 from .models import User, Movie
 import os
 # import requests
@@ -12,24 +13,24 @@ from werkzeug.utils import secure_filename
 import datetime
 import random
 import json
-
-
 basedir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'JPG', 'PNG', 'bmp'}
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Movie, db.session))
 
+
 @login_manager.user_loader
 def load_user(user_id):
-        return User.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
-def create_uuid():
+
+def create_uuid(filename):
     now_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     random_num = random.randint(0, 100)
     if random_num <= 10:
         random_num = str(0) + str(random_num)
     unique_num = str(now_time) + str(random_num)
-    return unique_num
+    return unique_num + filename
 
 
 def allowed_file(filename):
@@ -38,9 +39,11 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    movies = Movie.query.all()
-    movs = Movie.query.filter_by(movie_id=1).all()
-    return render_template('home.html',movies=movies,movs=movs)
+    movies = Movie.query.order_by(Movie.score.desc())[1:9]
+    movs = Movie.query.order_by(Movie.score.desc()).limit(1)
+    lastmovs = Movie.query.order_by(Movie.premiere_date.desc()).limit(10)
+    recomovs = Movie.query.order_by(Movie.score.desc()).limit(10)
+    return render_template('home.html',movies=movies,movs=movs,lastmovs=lastmovs,recomovs=recomovs)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -52,92 +55,156 @@ def register():
         # user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user！')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form,title='REGISTER')
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
- # Load the login Form Form
-    form = LoginForm()
-    if valid_login(form.email.data, form.password.data):
-        flash("Login Successfully")
-        #session['mail'] = form.emile.data
-        user=User.query.filter_by(mail=form.email.data).first()
         login_user(user)
         next = request.args.get('next')
         if next is None or not next.startswith('/'):
             next = url_for('home')
         return redirect(next)
-    else:
-        flash('Incorrect email or password')
-    return render_template('login.html', form=form,title='LOGIN')
+    return render_template('register.html', form=form, title='REGISTER')
 
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    users = User.query.filter().all()
-    users_number = User.query.filter().count()
-    movies = Movie.query.filter().all()
-    movies_number = Movie.query.filter().count()
-    return render_template('test.html', users=users, users_number=users_number, movies=movies,
-                           movies_number=movies_number)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+ # Load the login Form Form
+     form = LoginForm()
+     if form.validate_on_submit():
+         user = User.query.filter(User.mail == form.email.data,User.password == form.password.data).first()
+         if user:
+             login_user(user)
+             return redirect(url_for('home'))
+         else:
+             flash('The password is wrong ')
+
+     return render_template('login.html', form=form,title='LOGIN')
 
 
-@app.route('/images', methods=['GET', 'POST'])
-def images():
-    movies = Movie.query.filter().all()
-    return render_template('images.html', movies=movies)
+@app.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+@app.route('/change-password', methods=['GET', 'POST'])
+@login_required  #只有登录的人才能修改密码
+def change_password():
+    form = ResetForm()
+    if form.validate_on_submit():
+        if (current_user.password==form.old_password.data):
+            #这里引入user的上下文，这个概念不太懂，暂且当成全局变量来用
+            current_user.password = form.new_password.data
+            #修改密码
+            db.session.add(current_user)
+            db.session.commit()
+            #加入数据库的session，这里不需要.commit()，在配置文件中已经配置了自动保存
+            #flash('Your password has been updated.')
+            return redirect(url_for('profile',user_id=current_user.user_id))
+        else:
+            flash('Invalid password.')
+    return render_template("change_password.html", form=form)
 
 
 @app.route('/poster_upload', methods=['GET', 'POST'])
+@login_required
 def poster_upload():
-    return render_template('upload.html')
+    form = MovieInfoForm()
+    if form.validate_on_submit():
+        new_movie = Movie(movie_name=form.movie_name.data, movie_type=form.movie_type.data,
+                          movie_length=form.movie_length.data, introduction=form.introduction.data,
+                          country=form.country.data, special_effect=form.special_effect.data,
+                          comment=form.comments.data, actors=form.actors.data,
+                          director=form.director.data, premiere_date=form.premiere_date.data,
+                          score=form.score.data)
+        if request.method == 'POST':
+            filename = form.poster.data.filename
+            filename = create_uuid(filename)
+            upload_path = os.path.join(basedir, 'static/images', secure_filename(filename))
+            form.poster.data.save(upload_path)
+            new_movie.poster = filename
+            db.session.add(new_movie)
+            db.session.commit()
+            flash('Uploaded successfully!')
+
+    return render_template('upload.html', form=form)
 
 
-@app.route('/upload_poster', methods=['GET', 'POST'])
-def upload_poster():
-    f = request.files['file']
-    if not (f and allowed_file(f.filename)):
-        return render_template('upload.html', allow=2)
-    filename = create_uuid() + '.jpg'
-    upload_path = os.path.join(basedir, 'static/images', secure_filename(filename))
-    f.save(upload_path)
+@app.route('/edit_movieInfo/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_movieInfo(id):
+    movie = Movie.query.get(id)
+    form = MovieInfoForm(obj=movie)
+    if form.validate_on_submit():
+        if request.method == 'POST':
+            movie.movie_name = form.movie_name.data
+            movie.movie_type = form.movie_type.data
+            movie.movie_length = form.movie_length.data
+            movie.introduction = form.introduction.data
+            movie.country = form.country.data
+            movie.special_effect = form.special_effect.data
+            movie.comment = form.comments.data
+            movie.actors = form.actors.data
+            movie.director = form.director.data
+            movie.premiere_date = form.premiere_date.data
+            movie.score = form.score.data
+            filename = form.poster.data.filename
+            filename = create_uuid(filename)
+            upload_path = os.path.join(basedir, 'static/images', secure_filename(filename))
+            form.poster.data.save(upload_path)
+            movie.poster = filename
+            db.session.commit()
+        return redirect(url_for('admin_list'))
+    return render_template('edit_movieInfo.html', form=form, movie=movie)
 
-    return render_template('upload.html', allow=1)
+
+@app.route('/add_scene/<id>', methods=['GET', 'POST'])
+@login_required
+def add_scene(id):
+    movie = Movie.query.get(id)
+    infoForm = MovieInfoForm(obj=movie)
+    dataForm = MovieDataForm()
+    if dataForm.validate_on_submit():
+        movie_instance = Movie(movie_name=infoForm.movie_name.data, movie_type=infoForm.movie_type.data,
+                          movie_length=infoForm.movie_length.data, introduction=infoForm.introduction.data,
+                          country=infoForm.country.data, special_effect=infoForm.special_effect.data,
+                          comment=infoForm.comments.data, actors=infoForm.actors.data,
+                          director=infoForm.director.data, premiere_date=infoForm.premiere_date.data,
+                          score=infoForm.score.data, poster=infoForm.poster.data,
+
+                          date=dataForm.date.data, start_time=dataForm.start_time.data,
+                          finish_time=dataForm.finish_time.data, scene=dataForm.scene.data,
+                          projection_hall=dataForm.projection_hall.data, price=dataForm.price.data,
+                          )
+        db.session.add(movie_instance)
+        db.session.commit()
+        return redirect(url_for('admin_list'))
+    return render_template('add_scene.html', form=dataForm)
 
 
-@app.route('/upload_poster<id>', methods=['GET', 'POST'])
-def upload_poster_id():
-    movie = Movie.query.filter(id=id).first()
-    f = request.files['file']
-    if not (f and allowed_file(f.filename)):
-        return render_template('upload.html', allow=2)
-    filename = create_uuid() + '.jpg'
-    upload_path = os.path.join(basedir, 'static/images', secure_filename(filename))
-    f.save(upload_path)
-    movie.poster=filename
+@app.route('/show_scenes/<movie_name>', methods=['GET', 'POST'])
+@login_required
+def show_scenes(movie_name):
+    movies = Movie.query.filter_by(movie_name=movie_name).order_by(db.desc(Movie.date))
 
-    return render_template('upload.html', allow=1)
+    return render_template('show_scenes.html', movies=movies)
+
+
+@app.route('/delete_scene/<id>', methods=['GET','POST'])
+@login_required
+def delete_scene(id):
+    movie = Movie.query.get(id)
+    name = movie.movie_name
+    db.session.delete(movie)
+    db.session.commit()
+
+    return redirect(url_for('show_scenes', movie_name=name))
 
 
 @app.route('/profile/<user_id>')
 def profile(user_id):
-    user=User.query.filter_by(user_id=user_id).first()
+    user = User.query.filter_by(user_id=user_id).first()
     if user is None:
         abort(404)
-
-    return render_template('profile.html', user=user)
-
-
-# @app.route('/profile', methods=['GET', 'POST'])
-# def profile():
-#     user = User.query.filter_by( user_id=1 ).first()
-#     if user is None:
-#         abort(404)
-#
-#     return render_template('profile.html', user=user)
+    return render_template('profile.html', title='Individual Center', user=user)
 
 
 @app.route('/users', methods=['GET', 'POST'])
@@ -149,8 +216,110 @@ def users():
 
 @app.route('/list')
 def list():
-    movies = Movie.query.all()
+    movies = Movie.query.order_by(Movie.score.desc()).limit(15)
     return render_template('list.html', title='LIST',movies=movies)
+
+@app.route('/admin_list', methods=['GET', 'POST'])
+def admin_list():
+    movies = Movie.query.all()
+    return render_template('admin_list.html', title='LIST', movies=movies)
+
+
+@app.route('/edit/<user_id>', methods=['GET', 'POST'])
+def edit(user_id):
+    user = User.query.get(user_id)
+    form = EditProfileForm(obj=user)
+    if form.validate_on_submit():
+        t = user
+        t.age = form.age.data
+        t.gender = form.gender.data
+        t.phone_number = form.phone_number.data
+        db.session.commit()
+        return redirect(url_for('profile', user_id=t.user_id))
+    return render_template('edit.html',
+                           title='Edit',
+                           form=form)
+
+
+@app.route('/detail/<movie_id>')
+def detail(movie_id):
+    movie = Movie.query.filter_by(movie_id=movie_id).first()
+    if movie is None:
+        abort(404)
+    return render_template('detail.html', title='Movie Details', movie=movie)
+
+
+@app.route('/balance/<user_id>', methods=['GET', 'POST'])
+def balance(user_id):
+    form = TopUpForm()
+    if form.validate_on_submit():
+        number = form.number.data
+        current_user.money += number
+        db.session.commit()
+
+    return render_template('balance.html', title='balance', form=form, money=current_user.money)
+
+
+@app.route('/search_movie/<value>', methods=['GET', 'POST'])
+def search_movie(value):
+    number = Movie.query.filter_by(movie_name=value).count()
+    if number >= 1:
+        movies = Movie.query.filter_by(movie_name=value)
+    else:
+        movies = Movie.query.filter(Movie.movie_name.contains(value))
+        if movies is None:
+            flash('There is no such movie.')
+            next = request.args.get('next')
+            if next is None or not next.startswith('/'):
+                next = url_for('home')
+            return redirect(next)
+    return render_template('list.html', title='LIST', movies=movies, number=number)
+
+
+@app.route('/search_user/<value>', methods=['GET', 'POST'])
+def search_user(value):
+    user = User.query.filter_by(user_name=value).first()
+    if user == None:
+        flash('There is no such user.')
+        next = request.args.get('next')
+        if next is None or not next.startswith('/'):
+            next = url_for('home')
+        return redirect(next)
+    return render_template('profile.html', title=user.user_name, user=users)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    value = request.form.get('value')
+    if value is None:
+        value = session['search_options']
+    else:
+        if session['search_options'] is None:
+            value = ''
+        else:
+            session['search_options'] = value
+    if value[-2:] == "-u":
+        return redirect(url_for('search_user', value=value))
+    if value[-2:] == "-m":
+        return redirect(url_for('search_movie', value=value))
+    number = Movie.query.filter_by(movie_name=value).count()
+    if number != 0:
+        return redirect(url_for('search_movie', value=value))
+    else:
+        number = User.query.filter_by(user_name=value).count()
+        if number != 0:
+            return redirect(url_for('search_user', value=value))
+        else:
+            number = Movie.query.filter(Movie.movie_name.contains(value)).count()
+            if number != 0:
+                if value == '':
+                    return redirect(url_for('list'))
+                return redirect(url_for('search_movie', value=value))
+            else:
+                next = request.args.get('next')
+                if next is None or not next.startswith('/'):
+                    next = url_for('home')
+                return redirect(next)
 
 
 # view functions for android app
@@ -207,6 +376,16 @@ def app_get_profile():
             "age": user.age,
             "email": user.mail,
             "phonenumber": user.phone_number
+        }
+        return jsonify(resp)
+
+@app.route('/appnet/get_vip_level', methods=['GET', 'POST'])  
+def app_get_vip_level():
+    if request.form['username']:
+        user=User.query.filter(User.user_name==request.form['username']).first()
+        resp={
+            "gender": user.gender,
+            "vip_level": user.user_vip_level
         }
         return jsonify(resp)
   
@@ -291,6 +470,12 @@ def app_search():
         json_list+="]"
         print(json_list)
         resp = Response(json_list, mimetype="application/json") 
-        return resp    
-
-
+        return resp
+    
+@app.route('/appnet/select_seat', methods=['GET', 'POST'])
+def app_select_seat():
+    if request.form['seat_nums']:
+        num=request.form['seat_nums'].split('.');
+        print(num)
+        print(request.form['id'])
+        return '0'

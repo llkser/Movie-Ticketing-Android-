@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <head>
-<title>List</title>
+<title>User List</title>
 
 </head>
 <body>
@@ -9,7 +9,7 @@
 	<div class="w3_content_agilleinfo_inner">
 			<div class="agile_featured_movies">
 			<div class="inner-agile-w3l-part-head">
-					<h3 class="w3l-inner-h-title">Movie List</h3>
+					<h3 class="w3l-inner-h-title">User List</h3>
 					<p class="w3ls_head_para">Add short Description</p>
 				</div>
 					   <div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
@@ -31,14 +31,10 @@
 							  </tr>
 							</thead>
 							<tbody>
-								{%if movies%}
-								{%else%}
-								<tr><td>There is no such movies</td>></tr>
-								{%endif%}
 							  {% for movie in movies %}
 							  <tr>
 								<td>{{movie.movie_id}}</td>
-								<td class="w3-list-img"><a href="single.html"><img src="/static/images/{{movie.poster}}" width="35" height="60" alt="" /> <span>{{movie.movie_name}}</span></a></td>
+								<td class="w3-list-img"><a href="single.html"><img src="/static/images/{{movie.poster}}" width="35" height="60" alt="" /> <span>Swiss Army Man</span></a></td>
 								<td>{{movie.premiere_date}}</td>
 								<td>{{movie.special_effect}}</td>
 								<td class="w3-list-info"><a href="genre.html">{{movie.country}}</a></td>

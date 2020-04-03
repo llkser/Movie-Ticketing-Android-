@@ -13,6 +13,7 @@ Relationship = db.Table('relationship', db.Model.metadata,
 def get_user(ident):
   return User.query.get(int(ident))
 
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     user_id = db.Column(db.Integer, primary_key=True)
@@ -23,6 +24,7 @@ class User(UserMixin, db.Model):
     avatar = db.Column(db.String(128), index=True)
     age = db.Column(db.Integer)
     phone_number = db.Column(db.Integer)
+    money = db.Column(db.Integer)
     user_vip_level = db.Column(db.Integer)
     orders = db.relationship('Order', backref='users', lazy='dynamic')
 
@@ -55,11 +57,12 @@ class Movie(db.Model):
     actors = db.Column(db.String(128), index=True)
     director = db.Column(db.String(32), index=True)
     poster = db.Column(db.String(128), index=True)
+    serial_number = db.Column(db.String(40), server_default='0000000000000000000000000000000000000000')
     premiere_date = db.Column(db.Date)
     date = db.Column(db.Date)
     start_time = db.Column(db.Time)
     finish_time = db.Column(db.Time)
-    scene = db.Column(db.Integer)
+    scene = db.Column(db.Integer, default=0)
     projection_hall = db.Column(db.Integer)
     price = db.Column(db.Integer)
     score = db.Column(db.Integer)
@@ -72,6 +75,7 @@ class Order(db.Model):
     order_id = db.Column(db.Integer, primary_key=True)
     order_date = db.Column(db.DateTime, index=True)
     seat_number = db.Column(db.Integer)
+    ticket_key = db.Column(db.String(256), index=True)
     order_user = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     order_movie = db.Column(db.Integer, db.ForeignKey('movie.movie_id'))
 

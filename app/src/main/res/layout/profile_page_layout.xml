@@ -11,7 +11,7 @@
         android:layout_height="110dp"
         android:layout_gravity="center"
         android:layout_marginTop="80dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="40dp"
         android:src="@drawable/user" />
 
     <RelativeLayout
@@ -109,5 +109,11 @@
             android:padding="10dp"
             android:text=" Phonenumber"/>
     </RelativeLayout>
-
+    <Button
+        android:id="@+id/profileEditButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="Edit" />
 </LinearLayout>
