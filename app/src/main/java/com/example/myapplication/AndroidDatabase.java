@@ -31,7 +31,9 @@ public class AndroidDatabase extends SQLiteOpenHelper {
             "price text,"+
             "cinemas text,"+
             "img_url text,"+
+            "serial_number,"+
             "score text)";
+
 
     private Context mContext;
 

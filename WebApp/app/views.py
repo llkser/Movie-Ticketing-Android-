@@ -388,6 +388,21 @@ def app_get_vip_level():
             "vip_level": user.user_vip_level
         }
         return jsonify(resp)
+
+@app.route('/appnet/edit_profile', methods=['GET', 'POST'])
+def app_dit_profile():
+    if request.form['loginUsername']:
+        user=User.query.filter(User.user_name==request.form['loginUsername']).first()
+        user.user_name=request.form['username']
+        user.gender=request.form['gender']
+        user.age=request.form['age']
+        user.mail=request.form['email']
+        user.phone_number=request.form['phonenumber']
+        db.session.commit()
+        resp={
+            "Flag":"1"
+        }
+        return jsonify(resp)
   
 @app.route('/img/<img_name>', methods=['GET', 'POST'])  #input the image name as url, then this function would return the image
 def get_img(img_name):

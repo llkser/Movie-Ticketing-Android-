@@ -114,8 +114,7 @@ public class Main_page_activity extends AppCompatActivity  {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
-    {
-        menu.clear();
+    {  menu.clear();
         getMenuInflater().inflate(R.menu.main_page_menu,menu);
         MenuItem menuItem = menu.findItem(R.id.app_bar_search);
         mSearchView = (SearchView) menuItem.getActionView();//加载searchview
@@ -275,10 +274,20 @@ public class Main_page_activity extends AppCompatActivity  {
                                         // JSON数组里面的具体-JSON对象
 
                                         JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        int[] arr = new int[200];
+                                        if(cursor.getCount()!=0) {
 
-                                        if (jsonObject.getInt("movie_id") > cursor.getCount()) {
+                                            if(cursor.moveToFirst()) {
+                                                do {
+                                                    arr[cursor.getInt(cursor.getColumnIndex("movie_id"))]=1;
+                                                }
+                                                while(cursor.moveToNext());
+
+                                            }
+                                        }
+                                        if (arr[jsonObject.getInt("movie_id")]!=1) {
                                             Log.d("okhttp_error", String.valueOf(jsonObject.getInt("movie_id")) + " " + cursor.getCount());
-                                            db.execSQL("insert into Movie values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+                                            db.execSQL("insert into Movie values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
                                                     , new Object[]{jsonObject.getInt("movie_id"), jsonObject.getString("name"),
                                                             jsonObject.getString("movie_type"), jsonObject.getString("introduction"),
                                                             jsonObject.getString("length"), jsonObject.getString("special_effect"),
@@ -288,7 +297,9 @@ public class Main_page_activity extends AppCompatActivity  {
                                                             jsonObject.getString("start_time"), jsonObject.getString("finish_time"),
                                                             jsonObject.getString("scene"), jsonObject.getString("projection_hall"),
                                                             jsonObject.getString("price"), jsonObject.getString("cinemas"),
-                                                            "http://nightmaremlp.pythonanywhere.com/img/"+jsonObject.getString("img_url"), jsonObject.getString("score")
+                                                            "http://nightmaremlp.pythonanywhere.com/img/"+jsonObject.getString("img_url"), jsonObject.getString("serial_number"),
+                                                            jsonObject.getString("score")
+
                                                     });
                                         }
                                     }
@@ -321,11 +332,14 @@ public class Main_page_activity extends AppCompatActivity  {
                                             mAdapter.notifyItemChanged(mAdapter.mData.size());
                                             mAdapter.notifyItemRangeChanged(mAdapter.mData.size(),1);
                                         }
+
                                     }
                                     while(cursor.moveToNext());
+
                                 }
                                 if (mode == 0)
                                 init(list);
+
                                 Log.d("okhttp_error", "end of thread");
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -334,15 +348,22 @@ public class Main_page_activity extends AppCompatActivity  {
                         }
 
                     });
+
                 }
+
             });
+
+
         return list;
+
     }
 
     private List<Adapater_common_type> search_from_database(String keyword)
     {
         final List<Adapater_common_type> list = new ArrayList<>();
+
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
+
 
         Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 group by movie_name   --case-insensitive", new String[]{keyword});
         if(keyword=="")
@@ -365,6 +386,8 @@ public class Main_page_activity extends AppCompatActivity  {
                 }
                 else
                     list.add(movie_card);
+
+
             }
             while(cursor.moveToNext());
         }

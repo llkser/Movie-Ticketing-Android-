@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +47,8 @@ public class Register_page_activity extends AppCompatActivity implements View.On
         inputEmail=findViewById(R.id.email_input_text);
         registerButton=findViewById(R.id.registerButton);
         registerButton.setOnClickListener(this);
+        inputPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        reInputPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -70,6 +73,11 @@ public class Register_page_activity extends AppCompatActivity implements View.On
                 else if(!passWord.equals(rePassWord))
                 {
                     showToast("Confirm password not the same!");
+                    return;
+                }
+                else if(isEmail(email))
+                {
+                    showToast("Email not available!");
                     return;
                 }
                 OkHttpClient client = new OkHttpClient();
@@ -133,6 +141,22 @@ public class Register_page_activity extends AppCompatActivity implements View.On
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean isEmail(String flag_email)
+    {
+        boolean flag=false;
+        for(int i=0;i<flag_email.length();i++)
+        {
+            if(!flag&&flag_email.charAt(i)=='@')
+                flag=true;
+            else if(flag&&flag_email.charAt(i)=='@')
+            {
+                flag=false;
+                break;
+            }
+        }
+        return flag;
     }
 
     private void showToast(String str) {

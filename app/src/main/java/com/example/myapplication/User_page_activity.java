@@ -41,9 +41,9 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
     private TextView vip_level;
     private Button profile;
     private Button tickets;
+    private Button history;
     private Button membership;
     private Button settings;
-    private Button support;
     private Button logout;
     private AndroidDatabase androidDatabase;
 
@@ -56,15 +56,15 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
         vip_level=findViewById(R.id.vip_level);
         profile=findViewById(R.id.profile);
         tickets=findViewById(R.id.tickets);
+        history=findViewById((R.id.history));
         membership=findViewById(R.id.membership);
         settings=findViewById(R.id.settings);
-        support=findViewById((R.id.support));
         logout=findViewById(R.id.logout);
         profile.setOnClickListener(this);
         tickets.setOnClickListener(this);
         membership.setOnClickListener(this);
         settings.setOnClickListener(this);
-        support.setOnClickListener(this);
+        history.setOnClickListener(this);
         logout.setOnClickListener(this);
 
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
@@ -106,7 +106,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
                                 String vip_level_text = res_inform.getString("vip_level");
                                 String username_html;
                                 if(gender_text.equals("null"))
-                                    username.setText("null");
+                                    username.setText(user_name);
                                 else{
                                     if(gender_text.equals("male"))
                                         username_html = user_name + "  " + "<img src='" + R.drawable.male + "'>";
@@ -151,10 +151,15 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId())
         {
             case R.id.profile:
-                Intent intent = new Intent(User_page_activity.this,Profile_page_activity.class);
+                intent = new Intent(User_page_activity.this,Profile_page_activity.class);
+                startActivity(intent);
+                break;
+            case R.id.membership:
+                intent = new Intent(User_page_activity.this,Membership_page_activity.class);
                 startActivity(intent);
                 break;
             case R.id.logout:

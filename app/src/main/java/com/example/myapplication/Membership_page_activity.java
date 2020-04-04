@@ -4,21 +4,24 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Paint;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.BitmapCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,48 +35,42 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Profile_page_activity extends AppCompatActivity implements View.OnClickListener {
+public class Membership_page_activity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String Tag="Profile_page_activity";
+    public static final String Tag="Membership_activity";
     private TextView username;
-    private TextView gender;
-    private TextView age;
-    private TextView email;
-    private TextView phonenumber;
-    private Button profileEdit;
+    private TextView vip_level;
+    private TextView balance;
+    private TextView progress_label;
+    private TextView membership_message;
+    private ProgressBar membership_progress;
+    private Button topup_button;
     private AndroidDatabase androidDatabase;
-    private String gender_text;
-    private String age_text;
-    private String email_text;
-    private String phonenumber_text;
-    private String user_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_page_layout);
+        setContentView(R.layout.membership_page_layout);
 
-        username=findViewById(R.id.profile_username);
-        gender=findViewById(R.id.profile_gender);
-        age=findViewById(R.id.profile_age);
-        email=findViewById(R.id.profile_email);
-        phonenumber=findViewById(R.id.profile_phonenumber);
-        profileEdit=findViewById(R.id.profileEditButton);
-        profileEdit.setOnClickListener(this);
+        username=findViewById(R.id.membership_username);
+        vip_level=findViewById(R.id.membership_vip_level);
+        balance=findViewById(R.id.membership_balance);
+        membership_progress=findViewById(R.id.membership_progressbar);
+        progress_label=findViewById(R.id.membership_progresslabel);
+        membership_message=findViewById(R.id.membership_message);
+        topup_button=findViewById(R.id.membership_topup);
+        topup_button.setOnClickListener(this);
 
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
-
-        if(cursor.moveToFirst())
-        {
-            user_name=cursor.getString(cursor.getColumnIndex("Username"));
-            username.setText(user_name+" ");
+        if(cursor.moveToFirst()){
+            final String user_name=cursor.getString(cursor.getColumnIndex("Username"));
 
             OkHttpClient client = new OkHttpClient();
             FormBody.Builder formBuilder = new FormBody.Builder();
             formBuilder.add("username", user_name);
-            Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_profile").post(formBuilder.build()).build();
+            Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_vip_level").post(formBuilder.build()).build();
             final Call call = client.newCall(request);
             call.enqueue(new Callback()
             {
@@ -99,20 +96,17 @@ public class Profile_page_activity extends AppCompatActivity implements View.OnC
                         {
                             try {
                                 JSONObject res_inform = new JSONObject(res);
-                                gender_text = res_inform.getString("gender");
-                                age_text = res_inform.getString("age");
-                                email_text = res_inform.getString("email");
-                                phonenumber_text = res_inform.getString("phonenumber");
-                                String gender_html;
+                                String gender_text = res_inform.getString("gender");
+                                String vip_level_text = res_inform.getString("vip_level");
+                                String username_html;
                                 if(gender_text.equals("null"))
-                                    gender.setText("null");
-                                else
-                                {
+                                    username.setText(user_name);
+                                else{
                                     if(gender_text.equals("male"))
-                                        gender_html = "<img src='" + R.drawable.male + "'>";
+                                        username_html = user_name + "  " + "<img src='" + R.drawable.male + "'>";
                                     else
-                                        gender_html = "<img src='" + R.drawable.female + "'>";
-                                    gender.setText(Html.fromHtml(gender_html, new Html.ImageGetter() {
+                                        username_html = user_name + "  " + "<img src='" + R.drawable.female + "'>";
+                                    username.setText(Html.fromHtml(username_html, new Html.ImageGetter() {
                                         @Override
                                         public Drawable getDrawable(String source) {
                                             int id = Integer.parseInt(source);
@@ -122,9 +116,19 @@ public class Profile_page_activity extends AppCompatActivity implements View.OnC
                                         }
                                     }, null));
                                 }
-                                age.setText(age_text+" ");
-                                email.setText(email_text+" ");
-                                phonenumber.setText(phonenumber_text+" ");
+                                if(!vip_level_text.equals("null"))
+                                {
+                                    String vip_html="<img src='" + R.drawable.icon_vip + "'>";
+                                    vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {
+                                        @Override
+                                        public Drawable getDrawable(String source) {
+                                            int id = Integer.parseInt(source);
+                                            Drawable drawable = getResources().getDrawable(id, null);
+                                            drawable.setBounds(0, 0, 120 , 80);
+                                            return drawable;
+                                        }
+                                    }, null));
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -136,54 +140,15 @@ public class Profile_page_activity extends AppCompatActivity implements View.OnC
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("Profile");
+        actionBar.setTitle("Membership");
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId())
         {
-            case R.id.profileEditButton:
-                Intent intent = new Intent(Profile_page_activity.this,Profile_edit_activity.class);
-                intent.putExtra("username",user_name);
-                intent.putExtra("gender",gender_text);
-                intent.putExtra("age",age_text);
-                intent.putExtra("email",email_text);
-                intent.putExtra("phonenumber",phonenumber_text);
-                startActivityForResult(intent,1);
+            case R.id.membership_topup:
                 break;
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode)
-        {
-            case 1:
-                if(requestCode==RESULT_OK)
-                {
-                    username.setText(data.getStringExtra("username")+" ");
-                    String gender_html;
-                    if(data.getStringExtra("gender").equals("male"))
-                        gender_html = "<img src='" + R.drawable.male + "'>";
-                    else
-                        gender_html = "<img src='" + R.drawable.female + "'>";
-                    gender.setText(Html.fromHtml(gender_html, new Html.ImageGetter() {
-                        @Override
-                        public Drawable getDrawable(String source) {
-                            int id = Integer.parseInt(source);
-                            Drawable drawable = getResources().getDrawable(id, null);
-                            drawable.setBounds(0, 0, 60 , 60);
-                            return drawable;
-                        }
-                    }, null));
-                    age.setText(data.getStringExtra("age")+" ");
-                    email.setText(data.getStringExtra("email")+" ");
-                    phonenumber.setText(data.getStringExtra("phonenumber")+" ");
-                }
-                break;
-            default:
         }
     }
 
@@ -199,7 +164,7 @@ public class Profile_page_activity extends AppCompatActivity implements View.OnC
     }
 
     private void showToast(String str) {
-        Toast.makeText(Profile_page_activity.this,str,Toast.LENGTH_SHORT).show();
+        Toast.makeText(Membership_page_activity.this,str,Toast.LENGTH_SHORT).show();
     }
 
     @Override

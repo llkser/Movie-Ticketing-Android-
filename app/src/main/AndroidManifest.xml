@@ -20,6 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity android:name=".Ticketing_activity"
+            android:theme="@style/new_AppTheme" />
         <activity android:name=".Main_page_activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,6 +45,12 @@
             android:theme="@style/AppTheme.ActionBar.Userpage.Transparent" />
         <activity
             android:name=".Profile_page_activity"
+            android:theme="@style/AppTheme.ActionBar.Userpage.Transparent"/>
+        <activity
+            android:name=".Profile_edit_activity"
+            android:theme="@style/AppTheme.ActionBar.Userpage.Transparent"/>
+        <activity
+            android:name=".Membership_page_activity"
             android:theme="@style/AppTheme.ActionBar.Userpage.Transparent"/>
     </application>
     

@@ -56,8 +56,11 @@ public class Scene_page_activity extends AppCompatActivity implements View.OnCli
         fragmentList=new ArrayList<Fragment>();
 
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
+
         final SQLiteDatabase db = androidDatabase.getWritableDatabase();
+
         Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 ", new String[]{movie_name});
+
         SimpleDraweeView Movie_img;
         Movie_img = (SimpleDraweeView) findViewById(R.id.movie_post);
 
@@ -73,17 +76,20 @@ public class Scene_page_activity extends AppCompatActivity implements View.OnCli
         int count=0;
         if(cursor.moveToFirst()) {
             do {
-                Scene_fragment page = new Scene_fragment(cursor.getString(cursor.getColumnIndex("movie_name")), cursor.getString(cursor.getColumnIndex("date")));
-                fragmentList.add(page);
-                ButtonViewList.get(count).setText(cursor.getString(cursor.getColumnIndex("date")));
-                if(++count==3)
-                    break;
+                if("None".compareTo(cursor.getString(cursor.getColumnIndex("date")))!=0) {
+                    Scene_fragment page = new Scene_fragment(cursor.getString(cursor.getColumnIndex("movie_name")), cursor.getString(cursor.getColumnIndex("date")));
+                    fragmentList.add(page);
+                    ButtonViewList.get(count).setText(cursor.getString(cursor.getColumnIndex("date")));
+                    if(++count==3)
+                        break;
+                }
             }
             while (cursor.moveToNext());
         }
 
         while(count<3)
         {
+
             Scene_fragment page = new Scene_fragment("name", "data");
             ButtonViewList.get(count).setText("No schedule");
             fragmentList.add(page);
@@ -153,6 +159,7 @@ public class Scene_page_activity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

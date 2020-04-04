@@ -57,7 +57,8 @@ public class Scene_fragment extends Fragment {
                 scene.price=cursor.getString(cursor.getColumnIndex("price"));
                 scene.type=cursor.getString(cursor.getColumnIndex("special_effect"));
                 scene.name=cursor.getString(cursor.getColumnIndex("movie_name"));
-
+                scene.id=cursor.getInt(cursor.getColumnIndex("movie_id"));
+                scene.seats=cursor.getString(cursor.getColumnIndex("serial_number"));
                 Scene.add(scene);
             }
             while (cursor.moveToNext());
