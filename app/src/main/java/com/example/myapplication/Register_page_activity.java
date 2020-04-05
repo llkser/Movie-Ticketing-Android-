@@ -75,7 +75,7 @@ public class Register_page_activity extends AppCompatActivity implements View.On
                     showToast("Confirm password not the same!");
                     return;
                 }
-                else if(isEmail(email))
+                else if(!isEmail(email))
                 {
                     showToast("Email not available!");
                     return;

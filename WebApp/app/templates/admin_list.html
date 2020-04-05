@@ -27,13 +27,16 @@
 								<th>Country</th>
 								<th>Type</th>
 								<th>Score</th>
+								<th>  </th>
+								<th>  </th>
+								<th>  </th>
 							  </tr>
 							</thead>
 							<tbody>
 							  {% for movie, items in movies|groupby("movie_name")%}
 							  <tr>
                                  {% for movie in items %}
-								     {%if movie.scene == 1 or movie.scene == 0 %}
+								     {%if movie.scene == 0 %}
 									    <td>{{movie.movie_id}}</td>
 									    <td><img src="/static/images/{{movie.poster}}" width="100" height="100" alt="" /></td>
 									    <td>{{movie.movie_name}}</td>

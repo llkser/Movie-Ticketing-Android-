@@ -192,7 +192,7 @@ public class Profile_edit_activity extends AppCompatActivity implements View.OnC
                             {
                                 try {
                                     JSONObject res_inform = new JSONObject(res);
-                                    String flag = res_inform.getString("flag");
+                                    String flag = res_inform.getString("Flag");
                                     if(flag.equals("1"))
                                     {
                                         Intent intent=new Intent();

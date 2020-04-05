@@ -46,6 +46,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
     private Button settings;
     private Button logout;
     private AndroidDatabase androidDatabase;
+    private String user_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
         if(cursor.moveToFirst()){
-            final String user_name=cursor.getString(cursor.getColumnIndex("Username"));
+            user_name=cursor.getString(cursor.getColumnIndex("Username"));
 
             OkHttpClient client = new OkHttpClient();
             FormBody.Builder formBuilder = new FormBody.Builder();
@@ -223,6 +224,81 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onRestart() {
         super.onRestart();
+        SQLiteDatabase db = androidDatabase.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
+        if(cursor.moveToFirst()){
+            user_name=cursor.getString(cursor.getColumnIndex("Username"));
+
+            OkHttpClient client = new OkHttpClient();
+            FormBody.Builder formBuilder = new FormBody.Builder();
+            formBuilder.add("username", user_name);
+            Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_vip_level").post(formBuilder.build()).build();
+            final Call call = client.newCall(request);
+            call.enqueue(new Callback()
+            {
+                @Override
+                public void onFailure(Call call, final IOException e)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run() {
+                            showToast("Can not connect to networks！");
+                        }
+                    });
+                }
+                @Override
+                public void onResponse(Call call, final Response response) throws IOException
+                {
+                    final String res = response.body().string();
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            try {
+                                JSONObject res_inform = new JSONObject(res);
+                                String gender_text = res_inform.getString("gender");
+                                String vip_level_text = res_inform.getString("vip_level");
+                                String username_html;
+                                if(gender_text.equals("null"))
+                                    username.setText(user_name);
+                                else{
+                                    if(gender_text.equals("male"))
+                                        username_html = user_name + "  " + "<img src='" + R.drawable.male + "'>";
+                                    else
+                                        username_html = user_name + "  " + "<img src='" + R.drawable.female + "'>";
+                                    username.setText(Html.fromHtml(username_html, new Html.ImageGetter() {
+                                        @Override
+                                        public Drawable getDrawable(String source) {
+                                            int id = Integer.parseInt(source);
+                                            Drawable drawable = getResources().getDrawable(id, null);
+                                            drawable.setBounds(0, 0, 60 , 60);
+                                            return drawable;
+                                        }
+                                    }, null));
+                                }
+                                if(!vip_level_text.equals("null"))
+                                {
+                                    String vip_html="<img src='" + R.drawable.icon_vip + "'>";
+                                    vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {
+                                        @Override
+                                        public Drawable getDrawable(String source) {
+                                            int id = Integer.parseInt(source);
+                                            Drawable drawable = getResources().getDrawable(id, null);
+                                            drawable.setBounds(0, 0, 120 , 80);
+                                            return drawable;
+                                        }
+                                    }, null));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
+        }
         Log.d(Tag,"onRestart");
     }
 }

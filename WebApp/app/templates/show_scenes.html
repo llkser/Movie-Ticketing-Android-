@@ -27,6 +27,7 @@
 								<th>Finish time</th>
 								<th>Projection hall</th>
                                 <th>Price</th>
+								<th>  </th>
 							  </tr>
 							</thead>
 							<tbody>
@@ -40,7 +41,7 @@
                                     <td >{{movie.finish_time}}</td>
                                     <td >{{movie.projection_hall}}</td>
                                     <td>{{movie.price}}</td>
-                                    <td><a href="/delete_scene/{{movie.movie_id}}"><button type="button" class="btn btn-upload" style="color: gray">Delete</button></a></td>
+                                    <td><a href="/edit_movieData/{{movie.movie_id}}"><button type="button" class="btn btn-upload" style="color: gray">Edit</button></a></td>
                                  {%endif%}
 							  </tr>
 							  {% endfor %}

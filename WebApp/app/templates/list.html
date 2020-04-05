@@ -38,7 +38,7 @@
 							  {% for movie in movies %}
 							  <tr>
 								<td>{{movie.movie_id}}</td>
-								<td class="w3-list-img"><a href="single.html"><img src="/static/images/{{movie.poster}}" width="35" height="60" alt="" /> <span>{{movie.movie_name}}</span></a></td>
+								<td class="w3-list-img"><a href="{{url_for('detail',movie_id=movie.movie_id)}}"><img src="/static/images/{{movie.poster}}" width="35" height="60" alt="" /> <span>{{movie.movie_name}}</span></a></td>
 								<td>{{movie.premiere_date}}</td>
 								<td>{{movie.special_effect}}</td>
 								<td class="w3-list-info"><a href="genre.html">{{movie.country}}</a></td>

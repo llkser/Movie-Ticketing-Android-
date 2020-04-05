@@ -9,6 +9,7 @@ Relationship = db.Table('relationship', db.Model.metadata,
                         db.Column('company_name', db.String(32), db.ForeignKey('cinema.company_name'))
                         )
 
+
 @login_manager.user_loader
 def get_user(ident):
   return User.query.get(int(ident))
@@ -27,6 +28,7 @@ class User(UserMixin, db.Model):
     money = db.Column(db.Integer)
     user_vip_level = db.Column(db.Integer)
     orders = db.relationship('Order', backref='users', lazy='dynamic')
+    records = db.relationship('Record', backref='users', lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -87,3 +89,11 @@ class Cinema(db.Model):
     phone_number = db.Column(db.String(16), index=True)
     service = db.Column(db.String(128), index=True)
     movies = db.relationship('Movie', secondary=Relationship)
+
+
+class Record(db.Model):
+    __tablename__ = 'record'
+    record_id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer)
+    trade_date = db.Column(db.DateTime, index=True)
+    trade_user = db.Column(db.Integer, db.ForeignKey('user.user_id'))

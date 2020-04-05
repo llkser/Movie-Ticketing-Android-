@@ -12,13 +12,13 @@
 </style>
 <body>
 
-<div id="LEFT" style="position:relative;left:22%;float:left">
+<div id="LEFT" style="position:relative;left:26%;float:left">
 {% if movie.poster %}<br><br>
 <img class="img-rounded profile-thumbnail" src="../static/images/{{movie.poster}}" width="330" height="400"><br><br><br>
 {% endif %}
 </div><br><br>
 
-<div id="RIGHT" style="position:relative;left:35%;float:left">
+<div id="RIGHT" style="position:relative;left:40%;float:left">
   <h1><br>
       {{ movie.movie_name }} </h1> &nbsp &nbsp &nbsp <h4><span class="label label-default">{{ movie.special_effect }}
     </span></h4>
@@ -31,7 +31,7 @@
   <br><br><br>
    {{ movie.premiere_date }} (Mainland Release) | {{ movie.movie_length }} Minutes
   <br><br><br><br><br>
-   <button class="btn btn-primary btn-sm">
+   <button class="btn btn-danger btn-sm">
     Rank Star: {{ movie.score }}
    </button>
 </p><br>

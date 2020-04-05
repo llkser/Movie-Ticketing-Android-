@@ -7,10 +7,10 @@ from wtforms.validators import DataRequired, ValidationError, EqualTo, Length, E
 from .models import User
 from sqlalchemy import or_,and_
 
-
 class LoginForm(Form):
     email = StringField('email', render_kw={'placeholder': 'email'}, validators=[DataRequired(message='The email cannot be empty'),Email(message='Invalid mailbox format')])
     password = PasswordField(render_kw={'placeholder': 'password'}, validators=[DataRequired(message='The password cannot be empty')])
+
 
 class RegisterForm(Form):
     username = StringField('username', render_kw={'placeholder': 'username'},
@@ -35,6 +35,7 @@ class RegisterForm(Form):
         if user is not None:
             raise ValidationError('The email has been registered')
 
+
 class ResetForm(Form):
     old_password = PasswordField('old_password', render_kw={'placeholder': 'old_password'},
                                  validators=[DataRequired(message='Please enter the old password')])
@@ -55,15 +56,17 @@ def valid_login(email, password):
     else:
         return False
 
+
 class EditProfileForm(Form):
     age = IntegerField('Age', validators=[DataRequired()])
     gender = RadioField('Gender', choices=[('male', 'Male'), ('female', 'Female')], validators=[DataRequired()])
     phone_number = StringField('Phone_number', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    avatar = FileField('Avatar', validators=[FileRequired(), FileAllowed(['png', 'jpg', 'JPG', 'PNG', 'bmp'])],
+                       render_kw={'accept': 'image/*'})
 
     def validate_age(self, age):
         if age.data <= 0:
-            raise ValidationError('Well, as an alive person, your age should larger than 0')
+            raise ValidationError('Sorry, your age should be larger than 0')
 
 
 # class UserInfoForm(Form):
@@ -84,7 +87,8 @@ class EditProfileForm(Form):
 #     username = StringField('manager account',validators=[DataRequired(message='Please enter your username')])
 #     password = PasswordField('password',validators=[DataRequired(message='Please enter your password')])
 #     submit = SubmitField('login')
-#
+
+
 class MovieInfoForm(Form):
     movie_name = StringField('movie name', validators=[DataRequired()])
     movie_type = StringField('movie type', validators=[DataRequired()])
@@ -92,7 +96,7 @@ class MovieInfoForm(Form):
     movie_length = StringField('movie length', validators=[DataRequired()])
     premiere_date = DateField('premiere date', render_kw={'placeholder': 'xxxx-xx-xx'}, validators=[DataRequired()])
     special_effect = StringField('special effect', validators=[DataRequired()])
-    comments = TextAreaField('comments', validators=[DataRequired(), Length(min=0, max=1000)])
+    comments = TextAreaField('comments', validators=[DataRequired(), Length(min=0, max=250)])
     country = StringField('country', validators=[DataRequired()])
     actors = StringField('actors', validators=[DataRequired()])
     director = StringField('director', validators=[DataRequired()])
@@ -100,14 +104,16 @@ class MovieInfoForm(Form):
     poster = FileField('poster', validators=[FileRequired(), FileAllowed(['png', 'jpg', 'JPG', 'PNG', 'bmp'])],
                        render_kw={'accept': 'image/*'})
 
+
 class TopUpForm(Form):
     number = IntegerField('Money', validators=[DataRequired()],
-                          render_kw={'placeholder': 'how much you want to top up'})
-    submit = SubmitField('Sure about top-up')
+                          render_kw={'placeholder': 'How much you want to top up'})
+    submit = SubmitField('Confirm top-up')
 
     def validate_number(self, number):
         if number.data <= 0:
-            raise ValidationError('Only positive integer top up is accepted')
+            raise ValidationError('Sorry, only positive integer top up is accepted')
+
 
 class MovieDataForm(Form):
     date = DateField('date', render_kw={'placeholder': 'xxxx-xx-xx'}, validators=[DataRequired()])
@@ -116,3 +122,8 @@ class MovieDataForm(Form):
     finish_time = TimeField('finish time', render_kw={'placeholder': 'xx:xx:00'}, validators=[DataRequired()])
     projection_hall = IntegerField('projection hall', validators=[DataRequired()])
     price = IntegerField('price', validators=[DataRequired()])
+
+
+class OerderForm(Form):
+    line = SelectField(validators = [DataRequired('')], choices=[])
+    column = SelectField(validators=[DataRequired('')], choices=[])

@@ -2,13 +2,10 @@
  {% block content %}
 <h1>Edit Information</h1>
     <div class="login-form">
-    <form action="" method="post">
-    {{ form.hidden_tag() }}
     <!-- Input box-->
     <div style="margin:0 auto;width:450px">
-    <form action="" method="post" name="create">
+    <form action="/edit_profile/{{person.user_id}}" enctype='multipart/form-data' method='POST'>
       {{ form.hidden_tag() }}
-      <p>
           <br><br>
           Age:
            {{ form.age }}
@@ -21,13 +18,12 @@
           {{ form.gender }}<br><br>
           </div>
          Phone number:
-          {{ form.phone_number }}<br><br><br>
-          Submit:
-           {{ form.submit }}<br>
-      </p>
+          {{ form.phone_number }}<br><br><br><br>
+         User avatar:
+          {{ form.avatar }}<br><br><br>
+         <input type="submit"  value="Submit"><br>
      </form>
     </div>
-</form>
     </div>
 <br><br>
 <br><br>

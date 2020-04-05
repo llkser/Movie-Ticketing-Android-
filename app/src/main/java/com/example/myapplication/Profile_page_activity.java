@@ -158,10 +158,11 @@ public class Profile_page_activity extends AppCompatActivity implements View.OnC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(Tag,"onreStart");
         switch (requestCode)
         {
             case 1:
-                if(requestCode==RESULT_OK)
+                if(resultCode==RESULT_OK)
                 {
                     username.setText(data.getStringExtra("username")+" ");
                     String gender_html;

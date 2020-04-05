@@ -63,12 +63,11 @@
 
 						{% if current_user.is_authenticated %}
 							{% if current_user.mail == "944190546@qq.com" %}
-								<li><a href="/admin_list">List</a></li>
+								<li><a href="/admin_list">Edit-list</a></li>
 								<li><a href="/poster_upload">Upload</a></li>
 							{% endif%}
-						{%else%}
-							<li><a href="/list">List</a></li>
 						{% endif %}
+						<li><a href="/list">List</a></li>
 						<li><a href="contact.html">APP-Download</a></li>
 						{% if current_user.is_authenticated %}
 						<li>  <a class="dropdown-toggle" href="{{url_for('profile',user_id=current_user.user_id)}}">Profile</a></li>
@@ -76,7 +75,7 @@
                     		<a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<b class="caret"></b></a>
                    			 <ul class="dropdown-menu">
 								<li><a href="/logout" >Logout</a></li>
-								<li><a href="/change_password" >Change Password</a></li>
+								<li><a href="/change-password" >Change Password</a></li>
 								<li><a href="{{url_for('balance',user_id=current_user.user_id)}}" >My Balance</a></li>
                     		</ul>
                     	</li>

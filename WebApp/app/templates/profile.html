@@ -2,19 +2,20 @@
 
 {% block content %}
 <body>
-
+<br><br><br>
 <div id="LEFT" style="position:relative;left:25%;float:left">
 {% if user.avatar %}<br><br>
 <img class="img-rounded profile-thumbnail" src="../static/images/{{user.avatar}}" width="300" height="200"><br><br><br>
+{% else %}
+<img class="img-rounded profile-thumbnail" src="../static/images/default.jpg" width="300" height="200"><br><br><br>
 {% endif %}
 <br>
 <h2>{{user.user_name}}</h2><br><br>
   <p>Number of views:  <span class="badge">{{ user.orders.count() }}</span> &nbsp |
     &nbsp <span class="label label-default">VIP level: {{ user.user_vip_level }}</span>
   </p>
-</div>
+</div><br>
 
-<br><br><br>
 <div id="RIGHT" style="position:relative;left:45%;float:left">
 {% if user.mail or user.gender or user.age or user.phone_number %}
 <p><br>
@@ -31,7 +32,7 @@
   Phone number: {{ user.phone_number }}
   {% endif %}<br><br><br>
   {% if user.money %} {% if user.id == current_user.id %}
-  My balance: {{ user.money }}<a href="{{url_for('balance',user_id=current_user.user_id)}}">&nbsp &nbsp check balance and top up!</a>
+  My balance: {{ user.money }}<a href="{{url_for('balance',user_id=current_user.user_id)}}">&nbsp &nbsp Check balance and top up!</a>
   {% endif %}{% endif %}<br><br><br>
 </p><br>
 {% endif %}
