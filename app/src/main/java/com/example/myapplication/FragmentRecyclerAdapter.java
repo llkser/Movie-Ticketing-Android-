@@ -87,6 +87,8 @@ public class FragmentRecyclerAdapter extends RecyclerView.Adapter{
                     intent.putExtra("movie_price",movie_scene.price);
                     intent.putExtra("movie_id",""+movie_scene.id);
                     intent.putExtra("serial_number",movie_scene.seats);
+                    intent.putExtra("type",movie_scene.type);
+                    intent.putExtra("movie_type",movie_scene.movie_type);
                     mContext.startActivity(intent);
                 }
             });

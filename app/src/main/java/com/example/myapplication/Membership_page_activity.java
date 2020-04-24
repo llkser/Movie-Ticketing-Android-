@@ -14,6 +14,8 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -43,9 +45,17 @@ public class Membership_page_activity extends AppCompatActivity implements View.
     private TextView balance;
     private TextView progress_label;
     private TextView membership_message;
+    private TextView vip1_label;
+    private TextView vip2_label;
     private ProgressBar membership_progress;
     private Button topup_button;
     private AndroidDatabase androidDatabase;
+
+    private String user_name;
+    private String str_gender;
+    private String str_vip_level;
+    private int balance_amount;
+    private int accumulation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,21 +66,31 @@ public class Membership_page_activity extends AppCompatActivity implements View.
         vip_level=findViewById(R.id.membership_vip_level);
         balance=findViewById(R.id.membership_balance);
         membership_progress=findViewById(R.id.membership_progressbar);
+        vip1_label=findViewById(R.id.vip1_label);
+        vip2_label=findViewById(R.id.vip2_label);
         progress_label=findViewById(R.id.membership_progresslabel);
         membership_message=findViewById(R.id.membership_message);
         topup_button=findViewById(R.id.membership_topup);
         topup_button.setOnClickListener(this);
 
+        int screen_width = getWindowManager().getDefaultDisplay().getWidth();
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)vip1_label.getLayoutParams();
+        params.leftMargin=(screen_width-60)/5+10;
+        vip1_label.setLayoutParams(params);
+        ViewGroup.MarginLayoutParams params2=(ViewGroup.MarginLayoutParams)vip2_label.getLayoutParams();
+        params2.leftMargin=(screen_width-60)/5*2;
+        vip2_label.setLayoutParams(params2);
+
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
         if(cursor.moveToFirst()){
-            final String user_name=cursor.getString(cursor.getColumnIndex("Username"));
+            user_name=cursor.getString(cursor.getColumnIndex("Username"));
 
             OkHttpClient client = new OkHttpClient();
             FormBody.Builder formBuilder = new FormBody.Builder();
             formBuilder.add("username", user_name);
-            Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_vip_level").post(formBuilder.build()).build();
+            Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_membership").post(formBuilder.build()).build();
             final Call call = client.newCall(request);
             call.enqueue(new Callback()
             {
@@ -96,13 +116,15 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                         {
                             try {
                                 JSONObject res_inform = new JSONObject(res);
-                                String gender_text = res_inform.getString("gender");
-                                String vip_level_text = res_inform.getString("vip_level");
+                                str_gender = res_inform.getString("gender");
+                                str_vip_level = res_inform.getString("vip_level");
+                                balance_amount = res_inform.getInt("balance");
+                                accumulation = res_inform.getInt("accumulation");
                                 String username_html;
-                                if(gender_text.equals("null"))
+                                if(str_gender.equals("null"))
                                     username.setText(user_name);
                                 else{
-                                    if(gender_text.equals("male"))
+                                    if(str_gender.equals("male"))
                                         username_html = user_name + "  " + "<img src='" + R.drawable.male + "'>";
                                     else
                                         username_html = user_name + "  " + "<img src='" + R.drawable.female + "'>";
@@ -116,7 +138,7 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                         }
                                     }, null));
                                 }
-                                if(!vip_level_text.equals("null"))
+                                if(!str_vip_level.equals("null"))
                                 {
                                     String vip_html="<img src='" + R.drawable.icon_vip + "'>";
                                     vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {
@@ -128,7 +150,22 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                             return drawable;
                                         }
                                     }, null));
+                                    String discount="";
+                                    switch (str_vip_level)
+                                    {
+                                        case "1": discount="10%"; break;
+                                        case "2": discount="20%"; break;
+                                        case "3": discount="30%"; break;
+                                    }
+                                    membership_message.setText("You are VIP"+str_vip_level+" now. All tickets enjoy "+
+                                            discount+" discount !");
                                 }
+                                balance.setText(Integer.toString(balance_amount));
+                                if(accumulation>=500)
+                                    membership_progress.setProgress(100);
+                                else
+                                    membership_progress.setProgress(accumulation/5);
+                                progress_label.setText(Integer.toString(accumulation)+"/500+");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -148,6 +185,8 @@ public class Membership_page_activity extends AppCompatActivity implements View.
         switch (v.getId())
         {
             case R.id.membership_topup:
+                Intent intent = new Intent(Membership_page_activity.this,Topup_page_activity.class);
+                startActivity(intent);
                 break;
         }
     }
@@ -200,6 +239,52 @@ public class Membership_page_activity extends AppCompatActivity implements View.
     @Override
     protected void onRestart() {
         super.onRestart();
+        String username_html;
+        if(str_gender.equals("null"))
+            username.setText(user_name);
+        else{
+            if(str_gender.equals("male"))
+                username_html = user_name + "  " + "<img src='" + R.drawable.male + "'>";
+            else
+                username_html = user_name + "  " + "<img src='" + R.drawable.female + "'>";
+            username.setText(Html.fromHtml(username_html, new Html.ImageGetter() {
+                @Override
+                public Drawable getDrawable(String source) {
+                    int id = Integer.parseInt(source);
+                    Drawable drawable = getResources().getDrawable(id, null);
+                    drawable.setBounds(0, 0, 60 , 60);
+                    return drawable;
+                }
+            }, null));
+        }
+        if(!str_vip_level.equals("null"))
+        {
+            String vip_html="<img src='" + R.drawable.icon_vip + "'>";
+            vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {
+                @Override
+                public Drawable getDrawable(String source) {
+                    int id = Integer.parseInt(source);
+                    Drawable drawable = getResources().getDrawable(id, null);
+                    drawable.setBounds(0, 0, 120 , 80);
+                    return drawable;
+                }
+            }, null));
+            String discount="";
+            switch (str_vip_level)
+            {
+                case "1": discount="10%"; break;
+                case "2": discount="20%"; break;
+                case "3": discount="30%"; break;
+            }
+            membership_message.setText("You are VIP"+str_vip_level+" now. All tickets enjoy "+
+                    discount+" discount !");
+        }
+        balance.setText(Integer.toString(balance_amount));
+        if(accumulation>=500)
+            membership_progress.setProgress(100);
+        else
+            membership_progress.setProgress(accumulation/5);
+        progress_label.setText(Integer.toString(accumulation)+"/500+");
         Log.d(Tag,"onRestart");
     }
 }

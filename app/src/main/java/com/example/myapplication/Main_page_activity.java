@@ -101,6 +101,7 @@ public class Main_page_activity extends AppCompatActivity  {
         Fresco.initialize(Main_page_activity.this);
         toolbar=(androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
+
         setSupportActionBar(toolbar);
 
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
@@ -189,18 +190,8 @@ public class Main_page_activity extends AppCompatActivity  {
     private void init(List<Adapater_common_type> list) {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);        //设置布局管理器为2列，纵向
-        //StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mLayoutManager = new GridLayoutManager(Main_page_activity.this, 1);
-        //final List<Adapater_common_type> list = buildData();
-
         mAdapter = new WaterFallAdapter(this, list);
-        /*mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return setSpanSize(position,list);
-            }
-        });*/
-
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -250,6 +241,7 @@ public class Main_page_activity extends AppCompatActivity  {
                             Toast error_toast = Toast.makeText(Main_page_activity.this, "Could not connect to server", Toast.LENGTH_LONG);
                             error_toast.setGravity(Gravity.CENTER, 0, 0);
                             error_toast.show();
+                            RequestForMovieInform(0);
                         }
 
                     });

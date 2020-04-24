@@ -163,6 +163,10 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
                 intent = new Intent(User_page_activity.this,Membership_page_activity.class);
                 startActivity(intent);
                 break;
+            case R.id.tickets:
+                intent = new Intent(User_page_activity.this,Order_page_activity.class);
+                startActivity(intent);
+                break;
             case R.id.logout:
                 SQLiteDatabase db = androidDatabase.getWritableDatabase();
                 Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});

@@ -34,8 +34,25 @@ public class AndroidDatabase extends SQLiteOpenHelper {
             "serial_number,"+
             "score text)";
 
+    public static final String CREATE_MOVIR_ORDER_TABLE="create table Orders (" +
+            "order_id integer primary key ," +
+            "order_date text," +
+            "seat_number text, " +
+            "ticket_key text, " +
+            "order_user text,"+
+            "order_movie text)";
+
+    public static final String CREATE_COMMENT_ORDER_TABLE="create table comments (" +
+            "comment_id integer primary key ," +
+            "body text," +
+            "author_id text, " +
+            "movie_id text, " +
+            "User_name text, " +
+            "User_avatar text, " +
+            "order_id text)";
 
     private Context mContext;
+
 
     public AndroidDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context,name,factory,version);
@@ -46,6 +63,8 @@ public class AndroidDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_MOVIR_INFO_TABLE);
         db.execSQL(CREATE_USER_TABLE);
+        db.execSQL(CREATE_MOVIR_ORDER_TABLE);
+        db.execSQL(CREATE_COMMENT_ORDER_TABLE);
     }
 
     @Override

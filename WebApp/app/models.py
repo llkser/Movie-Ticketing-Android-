@@ -26,9 +26,11 @@ class User(UserMixin, db.Model):
     age = db.Column(db.Integer)
     phone_number = db.Column(db.Integer)
     money = db.Column(db.Integer)
+    accumulated_amount = db.Column(db.Integer)
     user_vip_level = db.Column(db.Integer)
     orders = db.relationship('Order', backref='users', lazy='dynamic')
     records = db.relationship('Record', backref='users', lazy='dynamic')
+    comments = db.relationship('Comment', backref='users', lazy='dynamic')
 
     def is_authenticated(self):
         return True
@@ -69,6 +71,7 @@ class Movie(db.Model):
     price = db.Column(db.Integer)
     score = db.Column(db.Integer)
     orders = db.relationship('Order', backref='movies', lazy='dynamic')
+    comments = db.relationship('Comment', backref='movies', lazy='dynamic')
     cinemas = db.relationship('Cinema', secondary=Relationship)
 
 
@@ -97,3 +100,11 @@ class Record(db.Model):
     amount = db.Column(db.Integer)
     trade_date = db.Column(db.DateTime, index=True)
     trade_user = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+
+
+class Comment(db.Model):
+    __tablename__ = 'comment'
+    comment_id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+    movie_id = db.Column(db.Integer, db.ForeignKey('movie.movie_id'))

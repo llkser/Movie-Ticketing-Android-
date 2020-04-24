@@ -5,11 +5,10 @@ from werkzeug.exceptions import abort
 from flask_login import current_user, login_user, logout_user, LoginManager, login_required
 from app import app, db, admin, login_manager
 from .forms import LoginForm, RegisterForm, valid_login, EditProfileForm, MovieInfoForm, TopUpForm, MovieDataForm, \
-    ResetForm, OerderForm
-from .models import User, Movie, Order
-import os
-# import requests
+    ResetForm, OrderForm, CommentForm
+from .models import User, Movie, Order, Comment
 from werkzeug.utils import secure_filename
+import os
 import datetime
 import random
 import json
@@ -415,7 +414,20 @@ def search():
                     next = url_for('home')
                 return redirect(next)
 
-        
+
+@app.route('/comment/<movie_id>', methods=['GET','POST'])
+def comment(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data, movies=movie,
+                            users=current_user._get_current_object())
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('detail', movie_id=movie.movie_id))
+    comments = movie.comments.order_by(Comment.comment_id.desc()).all()
+    return render_template('comment.html', movie=movie, form=form, comments=comments)
+
 # view functions for android app
 @app.route('/appnet/register', methods=['GET', 'POST'])  
 def app_regist():
@@ -452,6 +464,8 @@ def app_login():
         for user in User.query.all():
             if user.user_name==request.form['username']:
                 if user.password==request.form['password']:
+                    if user.user_vip_level==10:
+                        return jsonify(resp)
                     resp2={
                         "error_code": 2,
                         "message": "Log in successfully!"
@@ -483,15 +497,26 @@ def app_get_vip_level():
         }
         return jsonify(resp)
 
-@app.route('/appnet/edit_profile', methods=['GET', 'POST'])
-def app_edit_profile():
-    if request.form['loginUsername']:
-        user=User.query.filter(User.user_name==request.form['loginUsername']).first()
-        user.user_name=request.form['username']
-        user.gender=request.form['gender']
-        user.age=request.form['age']
-        user.mail=request.form['email']
-        user.phone_number=request.form['phonenumber']
+@app.route('/appnet/top_up', methods=['GET', 'POST'])  
+def app_top_up():
+    if request.form['username']:
+        user=User.query.filter(User.user_name==request.form['username']).first()
+        if request.form['amountCode']==1:
+            user.money=user.money+100
+            user.accumulated_amount=user.accumulated_amount+100
+        elif request.form['amountCode']==2:
+            user.money=user.money+200
+            user.accumulated_amount=user.accumulated_amount+200
+        else:
+            user.money=user.money+500
+            user.accumulated_amount=user.accumulated_amount+500
+        db.session.commit()
+        if user.accumulated_amount<200:
+            user.user_vip_level=1
+        elif user.accumulated_amount<500:
+            user.user_vip_level=2
+        else:
+            user.user_vip_level=3
         db.session.commit()
         resp={
             "Flag":"1"
@@ -542,7 +567,6 @@ def app_get_movieinfo():
             }
           
         movie_info =json.dumps(json_info)
-        print(movie_info)
         if i>=1:
             json_list+=","
         json_list=json_list+movie_info
@@ -551,6 +575,7 @@ def app_get_movieinfo():
     json_list+="]"
     resp = Response(json_list, mimetype="application/json") 
     return resp
+        
         
 @app.route('/appnet/search', methods=['GET', 'POST'])
 def app_search():
@@ -568,7 +593,6 @@ def app_search():
                     "score":movie.score,
                     "special_effect":movie.special_effect,
                     "actors":movie.actors,
-                    
                      }
                 movie_info =json.dumps(json_info)
                 if i>=1:
@@ -581,6 +605,33 @@ def app_search():
         resp = Response(json_list, mimetype="application/json") 
         return resp
     
+@app.route('/appnet/edit_profile', methods=['GET', 'POST'])
+def app_edit_profile():
+    if request.form['loginUsername']:
+        user=User.query.filter(User.user_name==request.form['loginUsername']).first()
+        user.user_name=request.form['username']
+        user.gender=request.form['gender']
+        user.age=request.form['age']
+        user.mail=request.form['email']
+        user.phone_number=request.form['phonenumber']
+        db.session.commit()
+        resp={
+            "Flag":"1"
+        }
+        return jsonify(resp)
+
+@app.route('/appnet/get_membership', methods=['GET', 'POST'])  
+def app_get_membership():
+    if request.form['username']:
+        user=User.query.filter(User.user_name==request.form['username']).first()
+        resp={
+            "gender": user.gender,
+            "vip_level": user.user_vip_level,
+            "balance": user.money,
+            "accumulation": user.accumulated_amount
+        }
+        return jsonify(resp)
+  
 @app.route('/appnet/select_seat', methods=['GET', 'POST'])
 def app_select_seat():
     if request.form['seat_nums']:
@@ -588,22 +639,90 @@ def app_select_seat():
         nums=request.form['seat_nums'].split('.')
         movies =Movie.query.filter_by(movie_id=request.form['id']).first()
         resp1={
-            "result": 0,
+            "result": "Seats are selected",
+            "errorcode":0,
             "serial_number":movies.serial_number
         }
-        seats=list(movies.serial_number)
+        seat=str(movies.serial_number)
+        seats=list(seat)
+        #critical area
         for num in nums:
-            if seats[num]==1:
+            if seats[int(num)]=='1':
                 flag=1
-        if flag==0:
-            for num in nums:
-                seats[num]==1
-            new_seats=''.join(seats)
-            movies.serial_number=new_seats
-            db.session.commit()
-            resp2={
-            "result": 1,
+                return jsonify(resp1)
+        
+        for num in nums:
+            seats[int(num)]='1'
+        new_seats=''.join(seats)
+        movies.serial_number=new_seats
+        db.session.commit()
+        resp2={
+            "result": "Success",
+            "errorcode":1,
             "serial_number":new_seats
-            }
-            return jsonify(resp2)
-        return jsonify(resp1)
+        }
+        print(new_seats)
+        return jsonify(resp2)
+        
+
+@app.route('/appnet/generate_order', methods=['GET', 'POST'])
+def app_generate_order():
+    if request.form['seat_nums']:
+        flag=0
+        nums=request.form['seat_nums'].split('.')
+        movies =Movie.query.filter_by(movie_id=request.form['id']).first()
+        orders=Order.query.filter_by(order_movie=request.form['id'],seat_number=int(nums[0])).all()
+        resp1={
+            "result": "order exist",
+            "errorcode":0,
+            "serial_number":movies.serial_number
+        }
+        if(len(orders)!=0):
+            return jsonify(resp1)
+        
+        resp2={
+            "result": "order generated",
+            "errorcode":1,
+            "serial_number":movies.serial_number
+        }
+        user=User.query.filter_by(user_name=request.form['user_name']).first()
+        user_id=user.user_id
+        movie_id=movies.movie_id
+        for num in nums:
+            seat_number=int(num)
+            ticket_key = encryption(user_id, seat_number + 1, movie_id)
+            order = Order(order_date=datetime.date.today(), seat_number=seat_number+1, order_user=user_id,
+                          ticket_key=ticket_key, order_movie=movie_id)
+            true_price = get_price(user,movies.price)
+            user.money = user.money - true_price
+            db.session.add(order)
+        db.session.commit()
+        return jsonify(resp2)
+        
+@app.route('/appnet/cancel_order', methods=['GET', 'POST'])
+def app_cancel_order():
+    if request.form['seat_nums']:
+        movies =Movie.query.filter_by(movie_id=request.form['id']).first()
+        seat=str(movies.serial_number)
+        seats=list(seat)
+        nums=request.form['seat_nums'].split('.')
+        for num in nums:
+                seats[int(num)]='0'
+        new_seats=''.join(seats)
+        movies.serial_number=new_seats
+        db.session.commit()
+        resp2={
+        "result": "order canceled"
+        }
+        return jsonify(resp2)
+        
+        
+def get_price(user,origin_price):
+    if user.user_vip_level == 0:
+        return origin_price
+    elif user.user_vip_level == 1:
+        return int(origin_price * 0.9)
+    elif user.user_vip_level == 2:
+        return int(origin_price * 0.8)
+    elif user.user_vip_level == 3:
+        return int(origin_price * 0.7)

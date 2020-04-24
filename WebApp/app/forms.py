@@ -124,6 +124,11 @@ class MovieDataForm(Form):
     price = IntegerField('price', validators=[DataRequired()])
 
 
-class OerderForm(Form):
+class OrderForm(Form):
     line = SelectField(validators = [DataRequired('')], choices=[])
     column = SelectField(validators=[DataRequired('')], choices=[])
+
+
+class CommentForm(Form):
+    body = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Submit')

@@ -63,6 +63,7 @@ final class Adapter_Scene implements Adapater_common_type,Serializable{
     public String finish;
     public String name;
     public String seats;
+    public String movie_type;
     public int id;
     @Override
     public int get_widget_type()
@@ -96,6 +97,34 @@ final class Adapter_seat_info implements Adapater_common_type,Serializable{
     {
         seat_num=num;
     }
+    @Override
+    public int get_widget_type()
+    {
+        return widget_type;
+    }
+}
+final class Adapter_order implements Adapater_common_type,Serializable{
+    public static final int widget_type=7;
+    public String code;
+    public String hall;
+    public String time;
+    public String date;
+    public String movie;
+    public String seat;
+    public String img_url;
+    public String id;
+    @Override
+    public int get_widget_type()
+    {
+        return widget_type;
+    }
+}
+
+final class Adapter_comments implements Adapater_common_type,Serializable{
+    public static final int widget_type=8;
+    public String user_img;
+    public String user_name;
+    public String comment;
     @Override
     public int get_widget_type()
     {

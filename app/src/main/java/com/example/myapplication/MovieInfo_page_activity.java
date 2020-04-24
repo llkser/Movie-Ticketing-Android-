@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.app.AppComponentFactory;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -17,16 +19,30 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MovieInfo_page_activity extends AppCompatActivity {
     private AndroidDatabase androidDatabase;
-
+    private String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,19 +50,23 @@ public class MovieInfo_page_activity extends AppCompatActivity {
         Intent intent = getIntent();
         final String movie_name = intent.getStringExtra("movie_name");
         Log.d("test", movie_name);
-
+/*
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("");
+        actionBar.setTitle("");*/
+        androidx.appcompat.widget.Toolbar toolbar=(androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("MOVIE INFO");
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         final SQLiteDatabase db = androidDatabase.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 group by movie_name   --case-insensitive", new String[]{movie_name});
+        Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 order by movie_id  --case-insensitive", new String[]{movie_name});
 
         if (cursor.moveToFirst()) {
-
+            id=String.valueOf(cursor.getInt(cursor.getColumnIndex("movie_id")));
             SimpleDraweeView Movie_img;
             SimpleDraweeView Movie_img2;
             TextView Movie_name;
@@ -105,6 +125,7 @@ public class MovieInfo_page_activity extends AppCompatActivity {
             });
 
         }
+        RequestForMovieInform();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -115,6 +136,142 @@ public class MovieInfo_page_activity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    GridLayoutManager mLayoutManager;
+    RecyclerView mRecyclerView;
+    WaterFallAdapter mAdapter;
+    private void init(List<Adapater_common_type> list) {
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.comment_recycler_view);
+        mLayoutManager = new GridLayoutManager(MovieInfo_page_activity.this,1);
+        mAdapter = new WaterFallAdapter(MovieInfo_page_activity.this, list);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    public List<Adapater_common_type> RequestForMovieInform()  {
+        OkHttpClient client = new OkHttpClient();
+        androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
+        final SQLiteDatabase db = androidDatabase.getWritableDatabase();
+        final List<Adapater_common_type> list=new ArrayList<>();
+        FormBody.Builder formBuilder = new FormBody.Builder();
+
+        Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
+        String user_name=null;
+        if(cursor.moveToFirst())
+        {
+            user_name = cursor.getString(cursor.getColumnIndex("Username"));
+        }
+        //formBuilder.add("User_name", user_name);
+        // formBuilder.add("key_word", Login_page_activity.password);
+        Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_comments").post(formBuilder.build()).build();
+
+        final Call call = client.newCall(request);
+        final String movie_id=id;
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+
+                    public void run() {
+                        Log.d("okhttp_error", e.getMessage());
+                        Toast error_toast = Toast.makeText(MovieInfo_page_activity.this, "Could not connect to server", Toast.LENGTH_LONG);
+                        error_toast.setGravity(Gravity.CENTER, 0, 0);
+                        error_toast.show();
+                        RequestForMovieInform();
+                    }
+
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) throws IOException {
+                final String res = response.body().string();
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+
+                    public void run() {
+                        try {
+
+                            Log.d("okhttp_error", res);
+                            JSONArray jsonArray = new JSONArray(res);
+
+                            Cursor cursor = db.rawQuery("select * from comments", new String[]{});
+                            int[] arr = new int[200];
+                            if(cursor.getCount()!=0) {
+
+                                if(cursor.moveToFirst()) {
+                                    do {
+                                        arr[cursor.getInt(cursor.getColumnIndex("comment_id"))]=1;
+                                    }
+                                    while(cursor.moveToNext());
+
+                                }
+                            }
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                // JSON数组里面的具体-JSON对象
+
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                if (arr[jsonObject.getInt("comment_id")]!=1) {
+                                    Log.d("okhttp_error", String.valueOf(jsonObject.getInt("comment_id")) + " " + cursor.getCount());
+                                    db.execSQL("insert into comments values(?,?,?,?,?,?,?)"
+                                            , new Object[]{jsonObject.getInt("comment_id"), jsonObject.getString("body"),
+                                                    jsonObject.getString("author_id"), jsonObject.getString("movie_id"),
+                                                    jsonObject.getString("User_name"), jsonObject.getString("User_avatar"),
+                                                    jsonObject.getString("order_id")
+                                            });
+                                }
+                                else
+                                {
+                                    ContentValues values = new ContentValues();
+                                    values.put("body", jsonObject.getString("body"));
+                                    db.update("comments", values, "comment_id=?",
+                                            new String[]{String.valueOf(jsonObject.getInt("comment_id"))});
+                                }
+                            }
+
+
+
+                            final SQLiteDatabase db1 = androidDatabase.getWritableDatabase();
+
+                            cursor = db1.rawQuery("select * from comments where movie_id=?", new String[]{movie_id});
+                            if(cursor.moveToFirst()) {
+                                do {
+
+                                    Adapter_comments comment= new Adapter_comments();
+
+                                    comment.comment = cursor.getString(cursor.getColumnIndex("body"));
+                                    comment.user_img = cursor.getString(cursor.getColumnIndex("User_avatar"));
+                                    comment.user_name = cursor.getString(cursor.getColumnIndex("User_name"));
+                                    list.add(comment);
+                                }
+                                while(cursor.moveToNext());
+
+                            }
+                            init(list);
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                });
+
+            }
+
+        });
+
+
+        return list;
+
     }
 
 }

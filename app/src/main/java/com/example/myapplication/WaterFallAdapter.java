@@ -74,6 +74,16 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
             View view = LayoutInflater.from(mContext).inflate(R.layout.card_view, null);
             return new MovieCardViewHolder(view);
         }
+        else if(viewType==7)
+        {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.order, null);
+            return new MovieOrderViewHolder(view);
+        }
+        else if(viewType==8)
+        {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.comment, null);
+            return new MovieCommentViewHolder(view);
+        }
         else
         {
             View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_banner, null);
@@ -109,6 +119,38 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
             });
 
         }
+        else if(holder instanceof MovieOrderViewHolder)
+        {
+            MovieOrderViewHolder order_holder= (MovieOrderViewHolder) holder;
+            final Adapter_order order = (Adapter_order ) mData.get(position);
+            order_holder.code.setText(order.code);
+            order_holder.movie_hall.setText(order.hall);
+            order_holder.Movie_name.setText(order.movie);
+            order_holder.movie_seat.setText(order.seat);
+            order_holder.movie_time.setText(order.time);
+            order_holder.order_data.setText(order.date);
+            Uri uri = Uri.parse(order.img_url);
+            order_holder.Movie_img.setImageURI(uri);
+            order_holder.Movie_img.getLayoutParams().height = 400;
+            order_holder.comment.setOnClickListener(new View.OnClickListener() {
+
+                public void onClick(View v) {
+                    Intent intent=new Intent(mContext,Comment_activity.class);
+                    intent.putExtra("movie_name",order.movie);
+                    mContext.startActivity(intent);
+                }
+            });
+        }
+        else if(holder instanceof MovieCommentViewHolder)
+        {
+            MovieCommentViewHolder comment_holder= ( MovieCommentViewHolder) holder;
+            final Adapter_comments comment = (Adapter_comments ) mData.get(position);
+            comment_holder.body.setText( comment.comment);
+            comment_holder.user_name.setText( comment.user_name);
+            Uri uri = Uri.parse(comment.user_img);
+            comment_holder.User_img.setImageURI(uri);
+            comment_holder.User_img.getLayoutParams().height = 40;
+        }
         else
         {
             banner_holder=(Recycler_banner_Holder)holder;
@@ -134,7 +176,44 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
         }
         return 0;
     }
+    public class MovieOrderViewHolder extends RecyclerView.ViewHolder {
+        public SimpleDraweeView Movie_img;
+        public TextView Movie_name;
+        public TextView order_data;
+        public TextView movie_time;
+        public TextView movie_hall;
+        public TextView code;
+        public TextView movie_seat;
+        public Button comment;
 
+        public MovieOrderViewHolder(View itemView) {
+            super(itemView);
+            Movie_img = (SimpleDraweeView) itemView.findViewById(R.id.order_movie_img);
+            Movie_name = (TextView) itemView.findViewById(R.id.order_movie_name);
+            order_data=(TextView) itemView.findViewById(R.id.order_time);
+            movie_time=(TextView) itemView.findViewById(R.id.order_movie_time);
+            movie_hall=(TextView) itemView.findViewById(R.id.order_movie_hall);
+            code=(TextView) itemView.findViewById(R.id.order_movie_code);
+            movie_seat=(TextView) itemView.findViewById(R.id.order_movie_seat);
+            comment=(Button)itemView.findViewById(R.id.order_movie_comment);
+
+
+        }
+    }
+    public class MovieCommentViewHolder extends RecyclerView.ViewHolder {
+        public SimpleDraweeView User_img;
+        public TextView body;
+        public TextView user_name;
+
+
+        public MovieCommentViewHolder(View itemView) {
+            super(itemView);
+            User_img = (SimpleDraweeView) itemView.findViewById(R.id.Comment_User_img);
+            body=(TextView) itemView.findViewById(R.id.comments);
+            user_name=(TextView) itemView.findViewById(R.id.User_name);
+
+        }
+    }
 
     public class MovieCardViewHolder extends RecyclerView.ViewHolder {
         public SimpleDraweeView Movie_img;

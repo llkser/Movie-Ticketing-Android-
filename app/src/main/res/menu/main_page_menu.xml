@@ -15,8 +15,4 @@
         android:showAsAction="ifRoom"
         app:showAsAction="ifRoom"
         />
-
-
-
-
 </menu>

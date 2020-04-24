@@ -33,7 +33,8 @@
   <br><br><br><br><br>
    <button class="btn btn-danger btn-sm">
     Rank Star: {{ movie.score }}
-   </button>
+   </button> &nbsp &nbsp &nbsp &nbsp &nbsp <a href="{{url_for('comment',movie_id=movie.movie_id)}}">
+<span class="label label-default">View comments</span></a>
 </p><br>
 </div>
 <br><br><br><br><br><br>

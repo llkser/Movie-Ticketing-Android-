@@ -52,6 +52,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
     private Button loginButton;
     private Button registerButton;
     private AndroidDatabase androidDatabase;
+    public static String password=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +87,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         final String account = inputAccount.getText().toString();
         final String passWord = inputPassword.getText().toString();
+        password=passWord;
         final int passRemembered;
         if(passIsRemembered.isChecked())
             passRemembered=1;
@@ -154,6 +156,7 @@ public class Login_page_activity extends AppCompatActivity implements View.OnCli
                                         {
                                             SQLiteDatabase db = androidDatabase.getWritableDatabase();
                                             Cursor cursor = db.rawQuery("select * from User where Username=?",new String[]{account});
+                                            db.execSQL("DELETE FROM Orders");
                                             if(cursor.getCount()==0)
                                                 db.execSQL("insert into User values(?,?,?,?)",new Object[] {
                                                         null,
