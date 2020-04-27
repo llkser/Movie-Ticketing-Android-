@@ -62,8 +62,6 @@ public class Ticketing_activity extends AppCompatActivity {
         price = intent.getStringExtra("movie_price");
         id=intent.getStringExtra("movie_id");
 
-
-
         TextView name=findViewById(R.id.ticketing_movie_name);
         name.setText(movie_name);
         TextView type=findViewById(R.id.ticketing_movie_type);
@@ -118,7 +116,6 @@ public class Ticketing_activity extends AppCompatActivity {
 
     public void Set_seat(String serial_number)
     {
-
         for (int i = 0; i < 40; i++) {
             boolean selected = false;
             if (serial_number.charAt(i) == '1')
@@ -179,7 +176,7 @@ public class Ticketing_activity extends AppCompatActivity {
                     @Override
 
                     public void run() {
-
+                        button.setEnabled(true);
                         try {
                             final String res = response.body().string();
                             JSONObject res_inform = null;
@@ -224,6 +221,8 @@ public class Ticketing_activity extends AppCompatActivity {
                                 intent.putExtra("id", id);
                                 intent.putExtra("price", res_inform.getString("total_price"));
                                 intent.putExtra("balance", res_inform.getString("balance"));
+                                intent.putExtra("vip_level", res_inform.getString("vip_level"));
+                                intent.putExtra("preferential_account", res_inform.getString("preferential_account"));
                                 intent.putExtra("nums", String.valueOf(seat_nums.size()));
 
                                 Ticketing_activity.this.startActivity(intent);

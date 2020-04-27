@@ -27,8 +27,16 @@
             fresco:failureImageScaleType="centerInside"
             />
     </LinearLayout>
+    <RatingBar
+        android:layout_gravity="center"
+        android:id="@+id/ratingBar"
+        android:numStars="5"
+        android:rating="5"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp">
+    </RatingBar>
     <androidx.cardview.widget.CardView
-        android:layout_margin="20dp"
+        android:layout_margin="8dp"
 
 
         android:layout_width="match_parent"
@@ -48,7 +56,7 @@
     </androidx.cardview.widget.CardView>
     <Button
         android:id="@+id/comment_submit"
-        android:layout_margin="20dp"
+        android:layout_margin="8dp"
         android:text="Submit"
         android:layout_width="match_parent"
         android:background="@color/colorAccent"

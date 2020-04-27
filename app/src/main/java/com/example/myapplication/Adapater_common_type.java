@@ -113,6 +113,8 @@ final class Adapter_order implements Adapater_common_type,Serializable{
     public String seat;
     public String img_url;
     public String id;
+    public String order_id;
+    public int watched;
     @Override
     public int get_widget_type()
     {

@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,7 +31,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -43,6 +46,17 @@ import okhttp3.Response;
 public class MovieInfo_page_activity extends AppCompatActivity {
     private AndroidDatabase androidDatabase;
     private String id;
+    SimpleDraweeView Movie_img;
+    SimpleDraweeView Movie_img2;
+    TextView Movie_name;
+    TextView movie_release_data;
+    TextView movie_length;
+    TextView movie_score;
+    TextView movie_type;
+    TextView movie_actors;
+    TextView movie_director;
+    TextView introduction;
+    Button purchase_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,19 +79,10 @@ public class MovieInfo_page_activity extends AppCompatActivity {
 
         Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 order by movie_id  --case-insensitive", new String[]{movie_name});
 
-        if (cursor.moveToFirst()) {
+
+            if (cursor.moveToFirst()) {
             id=String.valueOf(cursor.getInt(cursor.getColumnIndex("movie_id")));
-            SimpleDraweeView Movie_img;
-            SimpleDraweeView Movie_img2;
-            TextView Movie_name;
-            TextView movie_release_data;
-            TextView movie_length;
-            TextView movie_score;
-            TextView movie_type;
-            TextView movie_actors;
-            TextView movie_director;
-            TextView introduction;
-            Button purchase_button;
+
 
             Movie_img = (SimpleDraweeView) findViewById(R.id.movieinfo_img);
             Movie_img2 = (SimpleDraweeView) findViewById(R.id.post_img);
@@ -100,7 +105,7 @@ public class MovieInfo_page_activity extends AppCompatActivity {
             Movie_name.setText(cursor.getString(cursor.getColumnIndex("movie_name")));
             movie_release_data.setText("premiere date : "+ cursor.getString(cursor.getColumnIndex("premiere_date")));
             movie_length.setText("Length : " + cursor.getString(cursor.getColumnIndex("movie_length")));
-            movie_score.setText(cursor.getString(cursor.getColumnIndex("score")) + "/XX");
+            movie_score.setText(cursor.getString(cursor.getColumnIndex("score")) + "/10");
             movie_type.setText(cursor.getString(cursor.getColumnIndex("country")) + "/" + cursor.getString(cursor.getColumnIndex("movie_type")));
             movie_actors.setText("Actors : " + cursor.getString(cursor.getColumnIndex("actors")));
             movie_director.setText("Director : " + cursor.getString(cursor.getColumnIndex("director")));
@@ -125,8 +130,18 @@ public class MovieInfo_page_activity extends AppCompatActivity {
             });
 
         }
+        Date date=new Date();
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd,HH:mm:ss");
+        String compare=sf.format(date);
+        cursor= db.rawQuery("select * from Movie where whole_time > ? and instr(upper(movie_name), upper(?)) > 0", new String[]{compare,movie_name});
+        if(cursor.getCount()<=1) {
+            purchase_button.setEnabled(false);
+            purchase_button.setText("No schedule");
+            //purchase_button.setBackgroundColor(Color.WHITE);
+        }
         RequestForMovieInform();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -223,7 +238,7 @@ public class MovieInfo_page_activity extends AppCompatActivity {
                                     db.execSQL("insert into comments values(?,?,?,?,?,?,?)"
                                             , new Object[]{jsonObject.getInt("comment_id"), jsonObject.getString("body"),
                                                     jsonObject.getString("author_id"), jsonObject.getString("movie_id"),
-                                                    jsonObject.getString("User_name"), jsonObject.getString("User_avatar"),
+                                                    jsonObject.getString("User_name"), "http://nightmaremlp.pythonanywhere.com/img/"+jsonObject.getString("User_avatar"),
                                                     jsonObject.getString("order_id")
                                             });
                                 }

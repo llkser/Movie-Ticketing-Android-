@@ -19,6 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -33,7 +37,9 @@ public class Comment_activity extends AppCompatActivity {
     String id=null;
     String moviename=null;
     String username;
+    String order_id;
     SimpleDraweeView Movie_img;
+    private RatingBar ratings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +49,7 @@ public class Comment_activity extends AppCompatActivity {
         actionBar.setTitle("COMMENTS");
         Intent intent = getIntent();
         moviename = intent.getStringExtra("movie_name");
-
+        order_id=intent.getStringExtra("order_id");
         AndroidDatabase androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from User where Islogin=?", new String[]{"1"});
@@ -68,6 +74,14 @@ public class Comment_activity extends AppCompatActivity {
                 set_comment();
             }
         });
+
+        ratings=(RatingBar)findViewById(R.id.ratingBar);
+        ratings.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
+        @Override
+        public void onRatingChanged(RatingBar ratingBar, float rating,  boolean fromUser) {
+
+            }
+        });
     }
     public void get_comment()
     {
@@ -76,7 +90,8 @@ public class Comment_activity extends AppCompatActivity {
 
         formBuilder.add("username",  username);
         formBuilder.add("movie_id", id);
-        Log.d("okhttp_error", id);
+        formBuilder.add("order_id", order_id);
+
         Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/get_user_comments").post(formBuilder.build()).build();
 
         final Call call = client.newCall(request);
@@ -99,12 +114,27 @@ public class Comment_activity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 runOnUiThread(new Runnable() {
-                    final String res = response.body().string();
+
                     @Override
 
                     public void run() {
-                        EditText text=findViewById(R.id.comment_edit);
-                        text.setText(res);
+                        try {
+                            final String res = response.body().string();
+                            JSONObject res_inform = null;
+                            res_inform = new JSONObject(res);
+                            String body = res_inform.getString("body");
+                            int rate = res_inform.getInt("mark");
+
+                            EditText text=findViewById(R.id.comment_edit);
+                            text.setText(body);
+                            ratings.setRating((float)rate);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
 
 
@@ -120,6 +150,9 @@ public class Comment_activity extends AppCompatActivity {
         formBuilder.add("text", text.getText().toString() );
         formBuilder.add("username",  username);
         formBuilder.add("movie_id", id);
+        formBuilder.add("order_id", order_id);
+        formBuilder.add("rating", String.valueOf((int)(2*ratings.getRating())));
+        Log.d("okhttp_error", String.valueOf((int)ratings.getRating()));
         Request request = new Request.Builder().url("http://nightmaremlp.pythonanywhere.com/appnet/set_user_comments").post(formBuilder.build()).build();
 
         final Call call = client.newCall(request);

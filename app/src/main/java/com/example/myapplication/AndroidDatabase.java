@@ -32,6 +32,7 @@ public class AndroidDatabase extends SQLiteOpenHelper {
             "cinemas text,"+
             "img_url text,"+
             "serial_number,"+
+            "whole_time text,"+
             "score text)";
 
     public static final String CREATE_MOVIR_ORDER_TABLE="create table Orders (" +

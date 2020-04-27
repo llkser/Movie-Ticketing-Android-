@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -34,7 +35,11 @@ import com.zhy.http.okhttp.callback.BitmapCallback;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import android.view.*;
 
@@ -278,21 +283,40 @@ public class Main_page_activity extends AppCompatActivity  {
                                             }
                                         }
                                         if (arr[jsonObject.getInt("movie_id")]!=1) {
-                                            Log.d("okhttp_error", String.valueOf(jsonObject.getInt("movie_id")) + " " + cursor.getCount());
-                                            db.execSQL("insert into Movie values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+                                            /*Log.d("okhttp_error", String.valueOf(jsonObject.getInt("movie_id")) + " " + cursor.getCount());
+                                            DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                            Date date=format1.parse(jsonObject.getString("date"));
+                                            Log.d("okhttp_error", jsonObject.getString("date"));*/
+                                            String whole_time;
+                                            if(jsonObject.getString("date").equals("None"))
+                                                whole_time="None";
+                                            else
+                                            {
+                                            whole_time=jsonObject.getString("date")+","+jsonObject.getString("start_time");
+
+                                            }
+                                            db.execSQL("insert into Movie values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
                                                     , new Object[]{jsonObject.getInt("movie_id"), jsonObject.getString("name"),
                                                             jsonObject.getString("movie_type"), jsonObject.getString("introduction"),
                                                             jsonObject.getString("length"), jsonObject.getString("special_effect"),
                                                             jsonObject.getString("comments"), jsonObject.getString("country"),
                                                             jsonObject.getString("actors"), jsonObject.getString("director"),
-                                                            jsonObject.getString("release_data"), jsonObject.getString("date"),
+                                                            jsonObject.getString("release_data"),jsonObject.getString("date"),
                                                             jsonObject.getString("start_time"), jsonObject.getString("finish_time"),
                                                             jsonObject.getString("scene"), jsonObject.getString("projection_hall"),
                                                             jsonObject.getString("price"), jsonObject.getString("cinemas"),
                                                             "http://nightmaremlp.pythonanywhere.com/img/"+jsonObject.getString("img_url"), jsonObject.getString("serial_number"),
-                                                            jsonObject.getString("score")
+                                                            whole_time,jsonObject.getString("score")
 
                                                     });
+
+                                        }
+                                        else
+                                        {
+                                            ContentValues values = new ContentValues();
+                                            values.put("score", jsonObject.getString("score"));
+                                            db.update("Movie", values, "movie_id=?",
+                                                    new String[]{String.valueOf(jsonObject.getInt("movie_id"))});
                                         }
                                     }
                                 Adapter_recycler_banner banner=new Adapter_recycler_banner();
@@ -304,26 +328,30 @@ public class Main_page_activity extends AppCompatActivity  {
                                     mAdapter.notifyItemRangeChanged(mAdapter.mData.size(), 1);
                                 }
 
-                                Log.d("okhttp_error", "start of database");
+
                                 final SQLiteDatabase db1 = androidDatabase.getWritableDatabase();
                                 cursor = db1.rawQuery("select * from Movie group by movie_name", new String[]{});
                                 if(cursor.moveToFirst()) {
-                                    do {
-                                        Movie_card movie_card = new Movie_card();
-                                        movie_card.img_url = cursor.getString(cursor.getColumnIndex("img_url"));
-                                        movie_card.name = cursor.getString(cursor.getColumnIndex("movie_name"));
-                                        movie_card.release_data = cursor.getString(cursor.getColumnIndex("premiere_date"));
-                                        movie_card.length = cursor.getString(cursor.getColumnIndex("movie_length"));
-                                        movie_card.score = cursor.getString(cursor.getColumnIndex("score"));
-                                        movie_card.special_effect = cursor.getString(cursor.getColumnIndex("special_effect"));
-                                        movie_card.actors = cursor.getString(cursor.getColumnIndex("actors"));
-                                        if (mode == 0)
-                                            list.add(movie_card);
-                                        else{
-                                            mAdapter.mData.add(movie_card);
-                                            mAdapter.notifyItemChanged(mAdapter.mData.size());
-                                            mAdapter.notifyItemRangeChanged(mAdapter.mData.size(),1);
-                                        }
+
+                                        do {
+                                            {
+                                                Log.d("okhttp_error", cursor.getString(cursor.getColumnIndex("whole_time")));
+                                                Movie_card movie_card = new Movie_card();
+                                                movie_card.img_url = cursor.getString(cursor.getColumnIndex("img_url"));
+                                                movie_card.name = cursor.getString(cursor.getColumnIndex("movie_name"));
+                                                movie_card.release_data = cursor.getString(cursor.getColumnIndex("premiere_date"));
+                                                movie_card.length = cursor.getString(cursor.getColumnIndex("movie_length"));
+                                                movie_card.score = cursor.getString(cursor.getColumnIndex("score"));
+                                                movie_card.special_effect = cursor.getString(cursor.getColumnIndex("special_effect"));
+                                                movie_card.actors = cursor.getString(cursor.getColumnIndex("actors"));
+                                                if (mode == 0)
+                                                    list.add(movie_card);
+                                                else {
+                                                    mAdapter.mData.add(movie_card);
+                                                    mAdapter.notifyItemChanged(mAdapter.mData.size());
+                                                    mAdapter.notifyItemRangeChanged(mAdapter.mData.size(), 1);
+                                                }
+                                            }
 
                                     }
                                     while(cursor.moveToNext());
@@ -332,10 +360,12 @@ public class Main_page_activity extends AppCompatActivity  {
                                 if (mode == 0)
                                 init(list);
 
-                                Log.d("okhttp_error", "end of thread");
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            }
+                            }/* catch (ParseException e) {
+                                e.printStackTrace();
+                            }*/
 
                         }
 
@@ -385,6 +415,8 @@ public class Main_page_activity extends AppCompatActivity  {
         }
         return list;
     }
+
+
 
 }
 

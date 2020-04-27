@@ -11,9 +11,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-
         >
-
         <TextView
             android:id="@+id/ticketing_movie_name"
             android:textColor="#000000"

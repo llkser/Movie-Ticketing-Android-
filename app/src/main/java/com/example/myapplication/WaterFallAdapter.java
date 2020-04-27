@@ -124,9 +124,9 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
             MovieOrderViewHolder order_holder= (MovieOrderViewHolder) holder;
             final Adapter_order order = (Adapter_order ) mData.get(position);
             order_holder.code.setText(order.code);
-            order_holder.movie_hall.setText(order.hall);
+            order_holder.movie_hall.setText("hall: "+order.hall);
             order_holder.Movie_name.setText(order.movie);
-            order_holder.movie_seat.setText(order.seat);
+            order_holder.movie_seat.setText("seat number: "+order.seat);
             order_holder.movie_time.setText(order.time);
             order_holder.order_data.setText(order.date);
             Uri uri = Uri.parse(order.img_url);
@@ -137,9 +137,13 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     Intent intent=new Intent(mContext,Comment_activity.class);
                     intent.putExtra("movie_name",order.movie);
+                    intent.putExtra("order_id",order.order_id);
                     mContext.startActivity(intent);
                 }
             });
+            if(order.watched==0)
+                order_holder.comment.setVisibility(View.GONE);
+
         }
         else if(holder instanceof MovieCommentViewHolder)
         {

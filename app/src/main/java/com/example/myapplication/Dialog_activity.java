@@ -12,9 +12,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +45,9 @@ public class Dialog_activity extends AppCompatActivity {
     private String price;
     private String nums;
     private String Balance;
+    private String vip;
+    private String preferential;
+    Button button;
     private static final  int REQUEST = 1;
     Timer timer;
     @Override
@@ -51,41 +56,44 @@ public class Dialog_activity extends AppCompatActivity {
         setContentView(R.layout.dialog_activity);
         getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
         Intent intent = getIntent();
-        movie_name=intent.getStringExtra("seat_nums");
-        id=intent.getStringExtra("id");
-        price=intent.getStringExtra("price");
-        nums= intent.getStringExtra("nums");
-        Balance=intent.getStringExtra("balance");
-
+        movie_name = intent.getStringExtra("seat_nums");
+        id = intent.getStringExtra("id");
+        price = intent.getStringExtra("price");
+        nums = intent.getStringExtra("nums");
+        Balance = intent.getStringExtra("balance");
+        vip = intent.getStringExtra("vip_level");
+        preferential = intent.getStringExtra("preferential_account");
         AndroidDatabase androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
-         Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
-        if(cursor.moveToFirst())
-        {
+        Cursor cursor = db.rawQuery("select * from User where Islogin=?", new String[]{"1"});
+        if (cursor.moveToFirst()) {
             user_name = cursor.getString(cursor.getColumnIndex("Username"));
+
         }
 
-        TextView order_info=(TextView)findViewById(R.id.order_information);
-        order_info.setText(nums+" movie tickets");
-        TextView order_user=(TextView)findViewById(R.id.order_user_name);
+        TextView order_info = (TextView) findViewById(R.id.order_information);
+        order_info.setText(nums + " movie tickets");
+        TextView order_user = (TextView) findViewById(R.id.order_user_name);
         order_user.setText(user_name);
-        TextView accounts=(TextView)findViewById(R.id.Accounts_payable);
-        accounts.setText("¥"+price);
-        TextView balance=(TextView)findViewById(R.id.balance);
-        balance.setText("¥"+Balance);
+        TextView accounts = (TextView) findViewById(R.id.Accounts_payable);
+        accounts.setText("¥" + price);
+        TextView balance = (TextView) findViewById(R.id.balance);
+        balance.setText("¥" + Balance);
+        TextView perferential_balance = (TextView) findViewById(R.id.preferential_account);
+        perferential_balance.setText("¥" + preferential);
+        TextView viptext = (TextView) findViewById(R.id.vip);
+        viptext.setText(vip);
 
-        Button button=(Button)findViewById(R.id.confirm_button);
+        button = (Button) findViewById(R.id.confirm_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Integer.parseInt(Balance)<Integer.parseInt(price))
-                {
-                    AlertDialog dialog=new AlertDialog.Builder(Dialog_activity.this).setTitle("Your balance is not enough")
+                if (Integer.parseInt(Balance) < Integer.parseInt(price)) {
+                    AlertDialog dialog = new AlertDialog.Builder(Dialog_activity.this).setTitle("Your balance is not enough")
                             .setMessage("Do you want to recharge?")
                             .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
                                 }
                             })
                             .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -95,16 +103,13 @@ public class Dialog_activity extends AppCompatActivity {
                                 }
                             })
                             .show();
-                }
-                else{
-                    is_generated = 1;
-                    Intent intent = new Intent(Dialog_activity.this, password_Activity.class);
-                    Dialog_activity.this.startActivityForResult(intent, REQUEST);
+                } else {
+                    password_dialog();
                 }
 
             }
         });
-        ImageView img=(ImageView) findViewById(R.id.cancel_img);
+        ImageView img = (ImageView) findViewById(R.id.cancel_img);
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,39 +117,50 @@ public class Dialog_activity extends AppCompatActivity {
                 finish();
             }
         });
-        timer=new Timer();
-
-        /*timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                timeout=1;
-                Log.d("okhttp_error", "mmp");
-                finish();
-            }
-        },60,60);*/
-
-
+        timer = new Timer();
     }
-    @Override
-     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-                 // TODO Auto-generated method stub
-                 super.onActivityResult(requestCode, resultCode, data);
-                 if(resultCode==2){
-                        if(requestCode==REQUEST){
-                                 password= data.getStringExtra("password");
-                                 Log.d("okhttp_error", password);
-                                 Generate_order();
-                             }
-                     }
-                 else if(resultCode==1)
-                     if(requestCode==REQUEST){
-                         Cancel_order();
-                         finish();
-                 }
-             }
+    public void password_dialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Dialog_activity.this);
+        builder.setIcon(R.drawable.shield);
+        builder.setTitle("Please input your password:");
+        View dialogView = LayoutInflater.from(Dialog_activity.this).inflate(R.layout.password_input_dialog_layout, null);
+        builder.setView(dialogView);
+
+        final EditText inputPassword = (EditText)dialogView.findViewById(R.id.password_input_text);
+
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                password = inputPassword.getText().toString().trim();
+                if((password.length())==0)
+                {
+                    Toast error_toast = Toast.makeText(Dialog_activity.this, "password can't be null", Toast.LENGTH_LONG);
+                    error_toast.setGravity(Gravity.CENTER, 0, 0);
+                    error_toast.show();
+                }
+                else {
+                    dialog.dismiss();
+                    Generate_order();
+                    button.setEnabled(false);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
    public void Generate_order()
    {
-
+       is_generated = 1;
        OkHttpClient client = new OkHttpClient();
        FormBody.Builder formBuilder = new FormBody.Builder();
 
@@ -167,7 +183,7 @@ public class Dialog_activity extends AppCompatActivity {
                        Toast error_toast = Toast.makeText(Dialog_activity.this, "Could not connect to server", Toast.LENGTH_LONG);
                        error_toast.setGravity(Gravity.CENTER, 0, 0);
                        error_toast.show();
-                       Generate_order();
+                       button.setEnabled(true);
                    }
 
                });
@@ -178,7 +194,7 @@ public class Dialog_activity extends AppCompatActivity {
                runOnUiThread(new Runnable() {
                    @Override
                    public void run() {
-
+                       button.setEnabled(true);
                        try {
                            final String res = response.body().string();
                            JSONObject res_inform = null;
@@ -202,10 +218,13 @@ public class Dialog_activity extends AppCompatActivity {
                                Dialog_activity.this.startActivity(intent);
                                finish();
                            }
+                           else if(error_code.equals("2"))
+                           {
+                               password_dialog();
+                           }
                            else
                            {
-                               Intent intent = new Intent(Dialog_activity.this, password_Activity.class);
-                               Dialog_activity.this.startActivityForResult(intent,REQUEST);
+                               finish();
                            }
                        } catch (JSONException e) {
                            e.printStackTrace();

@@ -21,7 +21,9 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Scene_page_activity extends AppCompatActivity implements View.OnClickListener{
@@ -71,8 +73,10 @@ public class Scene_page_activity extends AppCompatActivity implements View.OnCli
             }
             while (cursor.moveToNext());
         }
-
-        cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 group by date order by scene", new String[]{movie_name});
+        Date date=new Date();
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd,HH:mm:ss");
+        String compare=sf.format(date);
+        cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 and whole_time > ? group by date", new String[]{movie_name,compare});
         int count=0;
         if(cursor.moveToFirst()) {
             do {

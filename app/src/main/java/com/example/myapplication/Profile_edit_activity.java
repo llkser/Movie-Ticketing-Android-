@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
@@ -36,6 +37,10 @@ import okhttp3.Response;
 public class Profile_edit_activity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String Tag="Profile_edit_activity";
+    public static final int CHOOSE_PHOTO=2;
+
+    private SimpleDraweeView userAvatar;
+    private Button editUserAvatar;
     private EditText newUsername;
     private CheckBox checkMale;
     private CheckBox checkFemale;
@@ -50,6 +55,9 @@ public class Profile_edit_activity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profile_layout);
         Intent intent=getIntent();
+        userAvatar=findViewById(R.id.edit_userAvatar);
+        editUserAvatar=findViewById(R.id.edit_userAvatar_button);
+        editUserAvatar.setOnClickListener(this);
         newUsername=findViewById(R.id.profile_new_username);
         checkMale=findViewById(R.id.profile_gender_male);
         checkFemale=findViewById(R.id.profile_gender_female);
@@ -212,6 +220,11 @@ public class Profile_edit_activity extends AppCompatActivity implements View.OnC
                     }
                 });
                 break;
+            case R.id.edit_userAvatar_button:
+                openAlbum();
+                break;
+            default:
+                break;
         }
     }
 
@@ -223,6 +236,26 @@ public class Profile_edit_activity extends AppCompatActivity implements View.OnC
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void openAlbum(){
+        Intent intent=new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent,CHOOSE_PHOTO);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case CHOOSE_PHOTO:
+                if(data!=null)
+                    userAvatar.setImageURI(data.getData());
+                else
+                    showToast("Please choose a photo!");
+            default:
+                break;
         }
     }
 
