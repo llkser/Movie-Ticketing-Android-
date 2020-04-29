@@ -58,6 +58,7 @@ import okhttp3.Response;
 public class Main_page_activity extends AppCompatActivity  {
     String[] permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     List<String> mPermissionList = new ArrayList<>();
+    public static List<Adapater_common_type> movie_list = new ArrayList<Adapater_common_type>();
     private void checkPermission() {
         mPermissionList.clear();
 
@@ -156,7 +157,8 @@ public class Main_page_activity extends AppCompatActivity  {
             //当点击搜索按钮时触发该方法
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mAdapter.removeAll();
+                movie_list.clear();
+                mAdapter.notifyDataSetChanged();
                 search_from_database(query);
                 return false;
             }
@@ -173,7 +175,8 @@ public class Main_page_activity extends AppCompatActivity  {
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                mAdapter.removeAll();
+                movie_list.clear();
+                mAdapter.notifyDataSetChanged();
                 RequestForMovieInform(1);
                 return false;
             }
@@ -192,11 +195,11 @@ public class Main_page_activity extends AppCompatActivity  {
     }
     GridLayoutManager mLayoutManager;
     RecyclerView mRecyclerView;
-    private void init(List<Adapater_common_type> list) {
+    private void init() {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);        //设置布局管理器为2列，纵向
         mLayoutManager = new GridLayoutManager(Main_page_activity.this, 1);
-        mAdapter = new WaterFallAdapter(this, list);
+        mAdapter = new WaterFallAdapter(this, movie_list);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -320,17 +323,15 @@ public class Main_page_activity extends AppCompatActivity  {
                                         }
                                     }
                                 Adapter_recycler_banner banner=new Adapter_recycler_banner();
-                                if (mode ==0)
-                                    list.add(banner);
-                                if (mode==1) {
-                                    mAdapter.mData.add(banner);
-                                    mAdapter.notifyItemChanged(mAdapter.mData.size());
-                                    mAdapter.notifyItemRangeChanged(mAdapter.mData.size(), 1);
-                                }
+                                movie_list.add(banner);
+                                if (mode==1)
+                                    mAdapter.notifyDataSetChanged();
+
+
 
 
                                 final SQLiteDatabase db1 = androidDatabase.getWritableDatabase();
-                                cursor = db1.rawQuery("select * from Movie group by movie_name", new String[]{});
+                                cursor = db1.rawQuery("select * from Movie where scene='0' ", new String[]{});
                                 if(cursor.moveToFirst()) {
 
                                         do {
@@ -344,13 +345,11 @@ public class Main_page_activity extends AppCompatActivity  {
                                                 movie_card.score = cursor.getString(cursor.getColumnIndex("score"));
                                                 movie_card.special_effect = cursor.getString(cursor.getColumnIndex("special_effect"));
                                                 movie_card.actors = cursor.getString(cursor.getColumnIndex("actors"));
-                                                if (mode == 0)
-                                                    list.add(movie_card);
-                                                else {
-                                                    mAdapter.mData.add(movie_card);
-                                                    mAdapter.notifyItemChanged(mAdapter.mData.size());
-                                                    mAdapter.notifyItemRangeChanged(mAdapter.mData.size(), 1);
-                                                }
+                                                movie_list.add(movie_card);
+                                                if (mode==1)
+                                                    mAdapter.notifyDataSetChanged();
+
+
                                             }
 
                                     }
@@ -358,7 +357,7 @@ public class Main_page_activity extends AppCompatActivity  {
 
                                 }
                                 if (mode == 0)
-                                init(list);
+                                init();
 
 
                             } catch (JSONException e) {
@@ -387,7 +386,7 @@ public class Main_page_activity extends AppCompatActivity  {
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
 
 
-        Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 group by movie_name   --case-insensitive", new String[]{keyword});
+        Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 and scene=?  --case-insensitive", new String[]{keyword,"0"});
         if(keyword=="")
             cursor = db.rawQuery("select * from Movie group by movie_name", new String[]{});
 
@@ -416,7 +415,13 @@ public class Main_page_activity extends AppCompatActivity  {
         return list;
     }
 
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        movie_list.clear();
+        mAdapter.notifyDataSetChanged();
+        RequestForMovieInform(1);
+    }
 
 }
 

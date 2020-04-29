@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,10 +44,11 @@ public class Order_page_activity extends AppCompatActivity {
         setContentView(R.layout.order_page_activity);
         Fresco.initialize(Order_page_activity.this);
         androidx.appcompat.widget.Toolbar toolbar=(androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("ORDERS");
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("Tickets");
+
         RequestFororderInform(0);
     }
     GridLayoutManager mLayoutManager;
@@ -84,9 +86,7 @@ public class Order_page_activity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, final IOException e) {
                 runOnUiThread(new Runnable() {
-
                     @Override
-
                     public void run() {
                         Log.d("okhttp_error", e.getMessage());
                         Toast error_toast = Toast.makeText(Order_page_activity.this, "Could not connect to server", Toast.LENGTH_LONG);
@@ -103,9 +103,7 @@ public class Order_page_activity extends AppCompatActivity {
                 final String res = response.body().string();
 
                 runOnUiThread(new Runnable() {
-
                     @Override
-
                     public void run() {
                         try {
 
@@ -184,16 +182,10 @@ public class Order_page_activity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
-
                 });
-
             }
-
         });
-
-
         return list;
 
     }

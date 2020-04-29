@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -50,7 +51,11 @@ public class AndroidDatabase extends SQLiteOpenHelper {
             "movie_id text, " +
             "User_name text, " +
             "User_avatar text, " +
+            "mark integer, " +
             "order_id text)";
+
+    public static final String CREATE_VERSION_TABLE="create table version (" +
+            "current_version text)";
 
     private Context mContext;
 
@@ -66,6 +71,8 @@ public class AndroidDatabase extends SQLiteOpenHelper {
         db.execSQL(CREATE_USER_TABLE);
         db.execSQL(CREATE_MOVIR_ORDER_TABLE);
         db.execSQL(CREATE_COMMENT_ORDER_TABLE);
+        db.execSQL(CREATE_VERSION_TABLE);
+        db.execSQL("insert into version values(?)",new Object[] { "1.00" });
     }
 
     @Override

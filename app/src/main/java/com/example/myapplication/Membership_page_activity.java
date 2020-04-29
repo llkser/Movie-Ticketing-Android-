@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
@@ -40,6 +42,7 @@ import okhttp3.Response;
 public class Membership_page_activity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String Tag="Membership_activity";
+    private SimpleDraweeView userAvatar;
     private TextView username;
     private TextView vip_level;
     private TextView balance;
@@ -62,6 +65,7 @@ public class Membership_page_activity extends AppCompatActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.membership_page_layout);
 
+        userAvatar=findViewById(R.id.membership_user_avatar);
         username=findViewById(R.id.membership_username);
         vip_level=findViewById(R.id.membership_vip_level);
         balance=findViewById(R.id.membership_balance);
@@ -120,6 +124,11 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                 str_vip_level = res_inform.getString("vip_level");
                                 balance_amount = res_inform.getInt("balance");
                                 accumulation = res_inform.getInt("accumulation");
+                                if(!res_inform.getString("user_avatar").equals("null"))
+                                {
+                                    String user_avatar_uri="http://nightmaremlp.pythonanywhere.com/img/"+res_inform.getString("user_avatar");
+                                    userAvatar.setImageURI(Uri.parse(user_avatar_uri));
+                                }
                                 String username_html;
                                 if(str_gender.equals("null"))
                                     username.setText(user_name);
@@ -138,7 +147,7 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                         }
                                     }, null));
                                 }
-                                if(!str_vip_level.equals("null"))
+                                if(!str_vip_level.equals("0"))
                                 {
                                     String vip_html="<img src='" + R.drawable.icon_vip + "'>";
                                     vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {
@@ -160,12 +169,12 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                     membership_message.setText("You are VIP"+str_vip_level+" now. All tickets enjoy "+
                                             discount+" discount !");
                                 }
-                                balance.setText(Integer.toString(balance_amount));
+                                balance.setText("¥"+Integer.toString(balance_amount));
                                 if(accumulation>=500)
                                     membership_progress.setProgress(100);
                                 else
                                     membership_progress.setProgress(accumulation/5);
-                                progress_label.setText(Integer.toString(accumulation)+"/500+");
+                                progress_label.setText("¥"+Integer.toString(accumulation)+"/500+");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -278,6 +287,11 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                 str_vip_level = res_inform.getString("vip_level");
                                 balance_amount = res_inform.getInt("balance");
                                 accumulation = res_inform.getInt("accumulation");
+                                if(!res_inform.getString("user_avatar").equals("null"))
+                                {
+                                    String user_avatar_uri="http://nightmaremlp.pythonanywhere.com/img/"+res_inform.getString("user_avatar");
+                                    userAvatar.setImageURI(Uri.parse(user_avatar_uri));
+                                }
                                 String username_html;
                                 if(str_gender.equals("null"))
                                     username.setText(user_name);
@@ -296,7 +310,7 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                         }
                                     }, null));
                                 }
-                                if(!str_vip_level.equals("null"))
+                                if(!str_vip_level.equals("0"))
                                 {
                                     String vip_html="<img src='" + R.drawable.icon_vip + "'>";
                                     vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {
@@ -318,12 +332,12 @@ public class Membership_page_activity extends AppCompatActivity implements View.
                                     membership_message.setText("You are VIP"+str_vip_level+" now. All tickets enjoy "+
                                             discount+" discount !");
                                 }
-                                balance.setText(Integer.toString(balance_amount));
+                                balance.setText("¥"+Integer.toString(balance_amount));
                                 if(accumulation>=500)
                                     membership_progress.setProgress(100);
                                 else
                                     membership_progress.setProgress(accumulation/5);
-                                progress_label.setText(Integer.toString(accumulation)+"/500+");
+                                progress_label.setText("¥"+Integer.toString(accumulation)+"/500+");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

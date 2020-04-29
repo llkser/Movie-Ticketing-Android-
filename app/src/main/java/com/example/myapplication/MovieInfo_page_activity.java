@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,12 +58,13 @@ public class MovieInfo_page_activity extends AppCompatActivity {
     TextView movie_director;
     TextView introduction;
     Button purchase_button;
+    String movie_name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movieinfo_page_layout);
         Intent intent = getIntent();
-        final String movie_name = intent.getStringExtra("movie_name");
+        movie_name= intent.getStringExtra("movie_name");
         Log.d("test", movie_name);
 /*
         ActionBar actionBar = getSupportActionBar();
@@ -77,13 +79,13 @@ public class MovieInfo_page_activity extends AppCompatActivity {
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         final SQLiteDatabase db = androidDatabase.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 order by movie_id  --case-insensitive", new String[]{movie_name});
+        Cursor cursor = db.rawQuery("select * from Movie WHERE scene=? and instr(upper(movie_name), upper(?)) > 0   --case-insensitive", new String[]{"0",movie_name});
 
 
             if (cursor.moveToFirst()) {
             id=String.valueOf(cursor.getInt(cursor.getColumnIndex("movie_id")));
 
-
+            Log.d("okhttp_error", cursor.getString(cursor.getColumnIndex("scene")));
             Movie_img = (SimpleDraweeView) findViewById(R.id.movieinfo_img);
             Movie_img2 = (SimpleDraweeView) findViewById(R.id.post_img);
             Movie_name = (TextView) findViewById(R.id.movie_name);
@@ -177,6 +179,8 @@ public class MovieInfo_page_activity extends AppCompatActivity {
         if(cursor.moveToFirst())
         {
             user_name = cursor.getString(cursor.getColumnIndex("Username"));
+
+
         }
         //formBuilder.add("User_name", user_name);
         // formBuilder.add("key_word", Login_page_activity.password);
@@ -235,17 +239,18 @@ public class MovieInfo_page_activity extends AppCompatActivity {
 
                                 if (arr[jsonObject.getInt("comment_id")]!=1) {
                                     Log.d("okhttp_error", String.valueOf(jsonObject.getInt("comment_id")) + " " + cursor.getCount());
-                                    db.execSQL("insert into comments values(?,?,?,?,?,?,?)"
+                                    db.execSQL("insert into comments values(?,?,?,?,?,?,?,?)"
                                             , new Object[]{jsonObject.getInt("comment_id"), jsonObject.getString("body"),
                                                     jsonObject.getString("author_id"), jsonObject.getString("movie_id"),
                                                     jsonObject.getString("User_name"), "http://nightmaremlp.pythonanywhere.com/img/"+jsonObject.getString("User_avatar"),
-                                                    jsonObject.getString("order_id")
+                                                    jsonObject.getString("mark"),jsonObject.getString("order_id")
                                             });
                                 }
                                 else
                                 {
                                     ContentValues values = new ContentValues();
                                     values.put("body", jsonObject.getString("body"));
+                                    values.put("mark", jsonObject.getString("mark"));
                                     db.update("comments", values, "comment_id=?",
                                             new String[]{String.valueOf(jsonObject.getInt("comment_id"))});
                                 }
@@ -264,6 +269,9 @@ public class MovieInfo_page_activity extends AppCompatActivity {
                                     comment.comment = cursor.getString(cursor.getColumnIndex("body"));
                                     comment.user_img = cursor.getString(cursor.getColumnIndex("User_avatar"));
                                     comment.user_name = cursor.getString(cursor.getColumnIndex("User_name"));
+                                    String rate1 = cursor.getString(cursor.getColumnIndex("mark"));
+                                    float rate=Float.parseFloat(rate1);
+                                    comment.mark=rate;
                                     list.add(comment);
                                 }
                                 while(cursor.moveToNext());

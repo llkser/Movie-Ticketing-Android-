@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -66,6 +67,8 @@ public class Profile_edit_activity extends AppCompatActivity implements View.OnC
         newPhonenumber=findViewById(R.id.profile_new_phonenumber);
         profileConfirmButton=findViewById(R.id.profileConfirmButton);
 
+        if(!intent.getStringExtra("user_avatar_uri").isEmpty())
+            userAvatar.setImageURI(Uri.parse(intent.getStringExtra("user_avatar_uri")));
         String gender_html;
         gender_html = "<img src='" + R.drawable.male + "'>";
         checkMale.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
@@ -204,11 +207,6 @@ public class Profile_edit_activity extends AppCompatActivity implements View.OnC
                                     if(flag.equals("1"))
                                     {
                                         Intent intent=new Intent();
-                                        intent.putExtra("username",username);
-                                        intent.putExtra("gender",gender);
-                                        intent.putExtra("age",age);
-                                        intent.putExtra("email",email);
-                                        intent.putExtra("phonenumber",phonenumber);
                                         setResult(RESULT_OK,intent);
                                         finish();
                                     }
@@ -251,7 +249,10 @@ public class Profile_edit_activity extends AppCompatActivity implements View.OnC
         switch (requestCode){
             case CHOOSE_PHOTO:
                 if(data!=null)
+                {
+                    Log.d(Tag,data.getData().getPath());
                     userAvatar.setImageURI(data.getData());
+                }
                 else
                     showToast("Please choose a photo!");
             default:

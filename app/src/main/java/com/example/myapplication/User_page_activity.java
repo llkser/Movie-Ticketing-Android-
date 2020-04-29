@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
@@ -39,6 +41,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
     public static final String Tag="User_page_activity";
     private TextView username;
     private TextView vip_level;
+    private SimpleDraweeView userAvatar;
     private Button profile;
     private Button tickets;
     private Button history;
@@ -53,6 +56,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_page_layout);
 
+        userAvatar=findViewById(R.id.user_avatar);
         username=findViewById(R.id.username);
         vip_level=findViewById(R.id.vip_level);
         profile=findViewById(R.id.profile);
@@ -105,6 +109,11 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
                                 JSONObject res_inform = new JSONObject(res);
                                 String gender_text = res_inform.getString("gender");
                                 String vip_level_text = res_inform.getString("vip_level");
+                                if(!res_inform.getString("user_avatar").equals("null"))
+                                {
+                                    String user_avatar_uri="http://nightmaremlp.pythonanywhere.com/img/"+res_inform.getString("user_avatar");
+                                    userAvatar.setImageURI(Uri.parse(user_avatar_uri));
+                                }
                                 String username_html;
                                 if(gender_text.equals("null"))
                                     username.setText(user_name);
@@ -123,7 +132,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
                                         }
                                     }, null));
                                 }
-                                if(!vip_level_text.equals("null"))
+                                if(!vip_level_text.equals("0"))
                                 {
                                     String vip_html="<img src='" + R.drawable.icon_vip + "'>";
                                     vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {
@@ -169,6 +178,10 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.history:
                 intent = new Intent(User_page_activity.this,History_activity.class);
+                startActivity(intent);
+                break;
+            case R.id.settings:
+                intent = new Intent(User_page_activity.this,Setting_page_activity.class);
                 startActivity(intent);
                 break;
             case R.id.logout:
@@ -268,6 +281,11 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
                                 JSONObject res_inform = new JSONObject(res);
                                 String gender_text = res_inform.getString("gender");
                                 String vip_level_text = res_inform.getString("vip_level");
+                                if(!res_inform.getString("user_avatar").equals("null"))
+                                {
+                                    String user_avatar_uri="http://nightmaremlp.pythonanywhere.com/img/"+res_inform.getString("user_avatar");
+                                    userAvatar.setImageURI(Uri.parse(user_avatar_uri));
+                                }
                                 String username_html;
                                 if(gender_text.equals("null"))
                                     username.setText(user_name);
@@ -286,7 +304,7 @@ public class User_page_activity extends AppCompatActivity implements View.OnClic
                                         }
                                     }, null));
                                 }
-                                if(!vip_level_text.equals("null"))
+                                if(!vip_level_text.equals("0"))
                                 {
                                     String vip_html="<img src='" + R.drawable.icon_vip + "'>";
                                     vip_level.setText(Html.fromHtml(vip_html, new Html.ImageGetter() {

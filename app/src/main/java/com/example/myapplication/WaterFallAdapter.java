@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -153,7 +154,8 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
             comment_holder.user_name.setText( comment.user_name);
             Uri uri = Uri.parse(comment.user_img);
             comment_holder.User_img.setImageURI(uri);
-            comment_holder.User_img.getLayoutParams().height = 40;
+            comment_holder.User_img.getLayoutParams().height = 70;
+            comment_holder.rating.setRating(comment.mark);
         }
         else
         {
@@ -208,14 +210,14 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
         public SimpleDraweeView User_img;
         public TextView body;
         public TextView user_name;
-
+        public RatingBar rating;
 
         public MovieCommentViewHolder(View itemView) {
             super(itemView);
             User_img = (SimpleDraweeView) itemView.findViewById(R.id.Comment_User_img);
             body=(TextView) itemView.findViewById(R.id.comments);
             user_name=(TextView) itemView.findViewById(R.id.User_name);
-
+            rating=(RatingBar) itemView.findViewById(R.id.ratingBar2);
         }
     }
 

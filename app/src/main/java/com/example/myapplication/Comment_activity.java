@@ -123,11 +123,11 @@ public class Comment_activity extends AppCompatActivity {
                             JSONObject res_inform = null;
                             res_inform = new JSONObject(res);
                             String body = res_inform.getString("body");
-                            int rate = res_inform.getInt("mark");
-
+                            String rate1 = res_inform.getString("mark");
+                            float rate=Float.parseFloat(rate1);
                             EditText text=findViewById(R.id.comment_edit);
                             text.setText(body);
-                            ratings.setRating((float)rate);
+                            ratings.setRating(rate);
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (JSONException e) {
