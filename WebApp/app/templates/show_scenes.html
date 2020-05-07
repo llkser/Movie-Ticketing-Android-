@@ -27,21 +27,32 @@
 								<th>Finish time</th>
 								<th>Projection hall</th>
                                 <th>Price</th>
-								<th>  </th>
+								<th>Order</th>
+							    {% if current_user.is_authenticated %}
+								  {% if current_user.mail == "944190546@qq.com" %}
+								  	<th>Edit</th>
+								  {% endif %}
+							  	{% endif %}
+
 							  </tr>
 							</thead>
 							<tbody>
-							  {% for movie in movies%}
+                              {% for movie in movies%}
 							  <tr>
                                  {%if movie.scene > 0 %}
                                     <td>{{movie.movie_name}}</td>
                                     <td>{{movie.scene}}</td>
                                     <td>{{movie.date}}</td>
                                     <td>{{movie.start_time}}</td>
-                                    <td >{{movie.finish_time}}</td>
-                                    <td >{{movie.projection_hall}}</td>
+                                    <td>{{movie.finish_time}}</td>
+                                    <td>{{movie.projection_hall}}</td>
                                     <td>{{movie.price}}</td>
-                                    <td><a href="/edit_movieData/{{movie.movie_id}}"><button type="button" class="btn btn-upload" style="color: gray">Edit</button></a></td>
+								  	<td><a href="/order/{{movie.movie_id}}">order</a></td>
+                                    {% if current_user.is_authenticated %}
+										{% if current_user.mail == "944190546@qq.com" %}
+											<td><a href="/edit_movieData/{{movie.movie_id}}"><button type="button" class="btn btn-upload" style="color: gray">Edit</button></a></td>
+										{% endif%}
+									{% endif %}
                                  {%endif%}
 							  </tr>
 							  {% endfor %}

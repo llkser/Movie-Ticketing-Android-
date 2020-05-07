@@ -6,10 +6,12 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.validators import DataRequired, ValidationError, EqualTo, Length, Email
 from .models import User
 from sqlalchemy import or_,and_
+from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 class LoginForm(Form):
-    email = StringField('email', render_kw={'placeholder': 'email'}, validators=[DataRequired(message='The email cannot be empty'),Email(message='Invalid mailbox format')])
-    password = PasswordField(render_kw={'placeholder': 'password'}, validators=[DataRequired(message='The password cannot be empty')])
+    email = StringField('email', render_kw={'placeholder': 'email'}, validators=[DataRequired(message='The email can not be empty'),Email(message='Invalid mailbox format')])
+    password = PasswordField(render_kw={'placeholder': 'password'}, validators=[DataRequired(message='The password can not be empty')])
+    verify_code = StringField('verify_code', render_kw={'placeholder': 'captcha'}, validators=[DataRequired(message='The verify_code can not be empty')])
 
 
 class RegisterForm(Form):
@@ -96,11 +98,10 @@ class MovieInfoForm(Form):
     movie_length = StringField('movie length', validators=[DataRequired()])
     premiere_date = DateField('premiere date', render_kw={'placeholder': 'xxxx-xx-xx'}, validators=[DataRequired()])
     special_effect = StringField('special effect', validators=[DataRequired()])
-    comments = TextAreaField('comments', validators=[DataRequired(), Length(min=0, max=250)])
     country = StringField('country', validators=[DataRequired()])
     actors = StringField('actors', validators=[DataRequired()])
+    score = IntegerField('score', validators=[DataRequired()])
     director = StringField('director', validators=[DataRequired()])
-    score = IntegerField('score', validators=[DataRequired(message='Score should be a integer')])
     poster = FileField('poster', validators=[FileRequired(), FileAllowed(['png', 'jpg', 'JPG', 'PNG', 'bmp'])],
                        render_kw={'accept': 'image/*'})
 
@@ -113,6 +114,8 @@ class TopUpForm(Form):
     def validate_number(self, number):
         if number.data <= 0:
             raise ValidationError('Sorry, only positive integer top up is accepted')
+        elif number.data > 1000:
+            raise ValidationError('The maximum allowed money is 1000 for once ')
 
 
 class MovieDataForm(Form):
@@ -130,5 +133,11 @@ class OrderForm(Form):
 
 
 class CommentForm(Form):
-    body = StringField('', validators=[DataRequired()])
+    body = StringField('body', render_kw={'placeholder': 'Please leave your comment here'}, validators=[DataRequired()])
+    mark = IntegerField('mark', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class appVersionForm(Form):
+    app_version = StringField('app_version', validators=[DataRequired()])
+    application = FileField('application', validators=[FileRequired(), FileAllowed(['apk'])])
+

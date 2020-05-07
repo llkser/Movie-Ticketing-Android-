@@ -68,7 +68,19 @@
 							{% endif%}
 						{% endif %}
 						<li><a href="/list">List</a></li>
-						<li><a href="contact.html">APP-Download</a></li>
+						{% if current_user.is_authenticated %}
+							{% if current_user.mail == "944190546@qq.com" %}
+								<li class="dropdown">
+                    			<a href="#" class="dropdown-toggle" data-toggle="dropdown">APP<b class="caret"></b></a>
+                   			 	<ul class="dropdown-menu">
+									<li><a href="/app_upload" >APP Upload</a></li>
+									<li><a href="/download_android_app">APP-Download</a></li>
+                    			</ul>
+                    			</li>
+							{% endif%}
+						{% else %}
+							<li><a href="/download_android_app">APP-Download</a></li>
+						{% endif %}
 						{% if current_user.is_authenticated %}
 						<li>  <a class="dropdown-toggle" href="{{url_for('profile',user_id=current_user.user_id)}}">Profile</a></li>
 						<li class="dropdown">
@@ -77,6 +89,7 @@
 								<li><a href="/logout" >Logout</a></li>
 								<li><a href="/change-password" >Change Password</a></li>
 								<li><a href="{{url_for('balance',user_id=current_user.user_id)}}" >My Balance</a></li>
+                    			<li><a href="{{url_for('orders',user_id=current_user.user_id)}}" >My Order</a></li>
                     		</ul>
                     	</li>
 
@@ -118,7 +131,7 @@
 	<div class="w3_breadcrumb">
 	<div class="breadcrumb-inner">
 			<ul>
-				<li><a href="index.html">Home Page</a><i>//</i></li>
+				<li><a>Home Page</a><i>//</i></li>
 				<li>{{ title }}</li>
 			</ul>
 		</div>

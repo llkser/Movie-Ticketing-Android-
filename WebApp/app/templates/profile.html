@@ -4,10 +4,13 @@
 <body>
 <br><br><br>
 <div id="LEFT" style="position:relative;left:25%;float:left">
-{% if user.avatar %}<br><br>
-<img class="img-rounded profile-thumbnail" src="../static/images/{{user.avatar}}" width="300" height="200"><br><br><br>
+{% if user.avatar %}
+  <div style="width: 220px;height: 220px; border-radius:220px;overflow: hidden;">
+<img class="img-rounded profile-thumbnail" src="../static/images/{{user.avatar}}" width="260" height="220">
+    </div>
+  <br><br>
 {% else %}
-<img class="img-rounded profile-thumbnail" src="../static/images/default.jpg" width="300" height="200"><br><br><br>
+<br><img class="img-rounded profile-thumbnail" src="../static/images/default.jpg" width="300" height="200"><br><br><br>
 {% endif %}
 <br>
 <h2>{{user.user_name}}</h2><br><br>
@@ -40,6 +43,11 @@
 <a href="{{url_for('edit',user_id=current_user.user_id)}}">
 <button class="btn btn-primary btn-sm">
     Improve profile
+</button>
+</a> &nbsp &nbsp &nbsp
+<a href="{{url_for('orders',user_id=current_user.user_id)}}">
+<button class="btn btn-primary btn-sm">
+    View orders
 </button>
 </a><br>
 

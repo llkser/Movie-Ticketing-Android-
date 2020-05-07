@@ -9,8 +9,7 @@
 	<div class="w3_content_agilleinfo_inner">
 			<div class="agile_featured_movies">
 			<div class="inner-agile-w3l-part-head">
-					<h3 class="w3l-inner-h-title">Movie List</h3>
-					<p class="w3ls_head_para">Add short Description</p>
+					<h3 class="w3l-inner-h-title">Past Orders</h3>
 				</div>
 					   <div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
 
@@ -21,33 +20,37 @@
 						<table id="table-breakpoint">
 							<thead>
 							  <tr>
-								<th>No.</th>
 								<th>Poster</th>
 								<th>Movie Name</th>
-								<th>Year</th>
-								<th>Status</th>
-								<th>Country</th>
-								<th>Genre</th>
-								<th>Rating</th>
-								<th>  </th>
+								<th>Date</th>
+								<th>Start time</th>
+								<th>End time</th>
+								<th>Seat</th>
+								<th>Price</th>
+								<th>ticket key</th>
+								<th>Comment</th>
 							  </tr>
 							</thead>
 							<tbody>
-								{%if movies%}
-								{%else%}
-								<tr><td>There is no such movies</td>></tr>
-								{%endif%}
-							  {% for movie in movies %}
+							  {% for comorder in comorders %}
 							  <tr>
-								<td>{{movie.movie_id}}</td>
-								<td><img src="/static/images/{{movie.poster}}" width="100" height="100" alt="" /></td>
-								<td><a href="{{url_for('detail',movie_id=movie.movie_id)}}"><span>{{movie.movie_name}}</span></a></td>
-								<td>{{movie.premiere_date}}</td>
-								<td>{{movie.special_effect}}</td>
-								<td>{{movie.country}}</td>
-								<td>{{movie.movie_type}}</td>
-								<td>{{movie.score}}</td>
-								<td><a href="/show_scenes/{{movie.movie_name}}"><button type="button" class="btn btn-upload" style="color: gray">Show scenes</button></a></td>
+                                <td><img src="/static/images/{{comorder[0].movies.poster}}" width="100" height="100" alt="" /></td>
+								<td>{{comorder[0].movies.movie_name}}</td>
+								<td>{{comorder[0].movies.date}}</td>
+								<td>{{comorder[0].movies.start_time}}</td>
+								<td>{{comorder[0].movies.finish_time}}</td>
+								<td>{{comorder[0].seat_number}}</td>
+								<td>{{comorder[0].movies.price}}</td>
+								<td>{{comorder[0].ticket_key}}</td>
+								{% if cur_time > comorder[0].movies.date.strftime('%Y-%m-%d') %}
+								    {% if comorder[1]==0 %}
+								    	<td><a href="/write_comment/{{comorder[0].order_id}}">Write Comment</a></td>
+								    {% else %}
+								  		<td>Have Comment</td>
+								    {% endif %}
+								{% else %}
+								    <td>Haven't played</td>
+								{% endif %}
 							  </tr>
 							{% endfor %}
 

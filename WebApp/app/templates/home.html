@@ -34,7 +34,19 @@
 							{% endif%}
 						{% endif %}
 						<li><a href="/list">List</a></li>
-						<li><a href="contact.html">APP-Download</a></li>
+						{% if current_user.is_authenticated %}
+							{% if current_user.mail == "944190546@qq.com" %}
+								<li class="dropdown">
+                    			<a href="#" class="dropdown-toggle" data-toggle="dropdown">APP<b class="caret"></b></a>
+                   			 	<ul class="dropdown-menu">
+									<li><a href="/app_upload" >APP Upload</a></li>
+									<li><a href="/download_android_app">APP-Download</a></li>
+                    			</ul>
+                    			</li>
+							{% endif%}
+						{% else %}
+							<li><a href="/download_android_app">APP-Download</a></li>
+						{% endif %}
 						{% if current_user.is_authenticated %}
 						<li>  <a class="dropdown-toggle" href="{{url_for('profile',user_id=current_user.user_id)}}">Profile</a></li>
 						<li class="dropdown">
@@ -43,6 +55,7 @@
 								<li><a href="/logout" >Logout</a></li>
 								<li><a href="/change-password" >Change Password</a></li>
 								<li><a href="{{url_for('balance',user_id=current_user.user_id)}}" >My Balance</a></li>
+                    			<li><a href="{{url_for('orders',user_id=current_user.user_id)}}" >My Order</a></li>
                     		</ul>
                     	</li>
 
@@ -129,37 +142,55 @@
 	        <div class="player-text">
 
 					<p class="fexi_header">{{mov.movie_name}}</p>
-					<p class="fexi_header_para"><span class="conjuring_w3">Story Line<label>:</label></span>Azeroth and Draenor were originally two peaceful planets.
-Human beings lived on Azeroth for generations, and the orcs worked hard on the land of Draenor. Until the emergence of Gul'dan, the peace between planets was broken.etc
-					</p>
+					<p class="fexi_header_para"><span>Story Line<label>:</label></span>{{mov.introduction}}</p>
 					<p class="fexi_header_para"><span>Release On<label>:</label></span>{{mov.premiere_date}} </p>
 					<p class="fexi_header_para">
 						<span>Genres<label>:</label> </span>
-						<a href="genre.html">{{mov.movie_type}}</a>
+						{{mov.movie_type}}
 					</p>
 					<p class="fexi_header_para fexi_header_para1"><span>Star Rating<label>:</label></span>
 						{% if mov.score > 0%}
-						<a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+						    {% if mov.score < 2 %}
+						    <a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a>
+							{% else %}
+						    <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+						    {% endif %}
 						{% else %}
 						<a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a>
 						{% endif %}
 						{% if mov.score > 2%}
-						<a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+							{% if mov.score < 4 %}
+						    <a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a>
+							{% else %}
+						    <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+						    {% endif %}
 						{% else %}
 						<a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a>
 						{% endif %}
 						{% if mov.score > 4%}
-						<a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+							{% if mov.score < 6 %}
+						    <a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a>
+							{% else %}
+						    <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+						    {% endif %}
 						{% else %}
 						<a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a>
 						{% endif %}
 						{% if mov.score > 6%}
-						<a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+							{% if mov.score < 8 %}
+						    <a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a>
+							{% else %}
+						    <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+						    {% endif %}
 						{% else %}
 						<a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a>
 						{% endif %}
 						{% if mov.score > 8%}
-						<a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+						    {% if mov.score < 10 %}
+						    <a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a>
+							{% else %}
+						    <a href="#"><i class="fa fa-star" aria-hidden="true"></i></a>
+						    {% endif %}
 						{% else %}
 						<a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a>
 						{% endif %}
@@ -170,43 +201,64 @@ Human beings lived on Azeroth for generations, and the orcs worked hard on the l
 				</div>
 				 <div class="col-md-7 wthree_agile-movies_list">
 					 {% for movie in movies %}
-							<div class="w3l-movie-gride-agile">
-								<a href="{{url_for('detail',movie_id=movie.movie_id)}}" ><img style="width:150px;heigth:240px;" src="/static/images/{{movie.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
+					 <div class="w3l-movie-gride-agile">
+								<a href="{{url_for('detail',movie_id=movie.movie_id)}}" class="hvr-sweep-to-bottom"><img name="pic" src="/static/images/{{movie.poster}}" style="width:230px; height:300px" title="Movies Pro" class="img-responsive" alt=" ">
 									<div class="w3l-action-icon"><i class="fa fa-play-circle-o" aria-hidden="true"></i></div>
 								</a>
 									<div class="mid-1 agileits_w3layouts_mid_1_home">
 										<div class="w3l-movie-text">
-											<h6><a href="single.html">{{movie.movie_name}}</a></h6>
+											<h6>{{movie.movie_name}}</h6>
 										</div>
 										<div class="mid-2 agile_mid_2_home">
-											<p>{{movie.premiere_date}}</p>
-											<div class="block-stars">
-												<ul class="w3l-ratings">
-								{% if movie.score > 0%}
-								<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
-								{% else %}
-								<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-								{% endif %}
-								{% if movie.score > 2%}
-								<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
-								{% else %}
-								<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-								{% endif %}
-								{% if movie.score > 4%}
-								<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
-								{% else %}
-								<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-								{% endif %}
-								{% if movie.score > 6%}
-								<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
-								{% else %}
-								<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-								{% endif %}
-								{% if movie.score > 8%}
-								<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
-								{% else %}
-								<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-								{% endif %}
+											<h6>{{movie.premiere_date}}</h6>
+											<div >
+
+												<ul class="w3l-ratings" float="left;">
+													{% if movie.score > 0%}
+														{% if movie.score < 2 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
+													{% else %}
+													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
+													{% endif %}
+													{% if movie.score > 2%}
+														{% if movie.score < 4 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
+													{% else %}
+													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
+													{% endif %}
+													{% if movie.score > 4%}
+														{% if movie.score < 6 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
+													{% else %}
+													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
+													{% endif %}
+													{% if movie.score > 6%}
+														{% if movie.score < 8 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
+													{% else %}
+													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
+													{% endif %}
+													{% if movie.score > 8%}
+														{% if movie.score < 10 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
+													{% else %}
+													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
+													{% endif %}
 												</ul>
 											</div>
 											<div class="clearfix"></div>
@@ -216,8 +268,7 @@ Human beings lived on Azeroth for generations, and the orcs worked hard on the l
 									<p>NEW</p>
 								</div>
 						</div>
-					 {% endfor %}
-<!--推荐电影小窗2-->
+<!--推荐电影小窗2-->   {% endfor %}
 					</div>
 					<div class="clearfix"> </div>
 					</div>
@@ -231,39 +282,60 @@ Human beings lived on Azeroth for generations, and the orcs worked hard on the l
  					<div class="wthree_agile-requested-movies">
 						{% for lastmov in lastmovs %}
 								<div class="col-md-2 w3l-movie-gride-agile requested-movies">
-									<a href="{{url_for('detail',movie_id=lastmov.movie_id)}}" class="hvr-sweep-to-bottom"><img style="width:200px;heigth:320px;" src="/static/images/{{lastmov.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
+									<a href="{{url_for('detail',movie_id=lastmov.movie_id)}}" class="hvr-sweep-to-bottom"><img name="pic" src="/static/images/{{lastmov.poster}}" style="width:240px; height:300px" title="Movies Pro" class="img-responsive" alt=" ">
 										<div class="w3l-action-icon"><i class="fa fa-play-circle-o" aria-hidden="true"></i></div>
 									</a>
 									<div class="mid-1 agileits_w3layouts_mid_1_home">
 										<div class="w3l-movie-text">
-											<h6><a href="single.html">{{lastmov.movie_name}}</a></h6>
+											<h6>{{lastmov.movie_name}}</h6>
 										</div>
-										<div class="mid-2 agile_mid_2_home">
-											<p>{{lastmov.premiere_date}}</p>
-											<div class="block-stars">
-												<ul class="w3l-ratings">
+
+										<div text-Align="center">
+											<p margin-left="auto;" margin-right="auto;">{{lastmov.premiere_date}}</p>
+											<div>
+												<ul class="w3l-ratings" float="left;">
 													{% if lastmov.score > 0%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if lastmov.score < 2 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if lastmov.score > 2%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if lastmov.score < 4 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if lastmov.score > 4%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if lastmov.score < 6 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if lastmov.score > 6%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if lastmov.score < 8 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if lastmov.score > 8%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if lastmov.score < 10 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
@@ -290,39 +362,59 @@ Human beings lived on Azeroth for generations, and the orcs worked hard on the l
 				  <div class="wthree_agile-requested-movies">
      					{% for recomov in recomovs %}
 								<div class="col-md-2 w3l-movie-gride-agile requested-movies">
-								<a href="{{url_for('detail',movie_id=recomov.movie_id)}}" class="hvr-sweep-to-bottom"><img style="width:200px;heigth:320px;" src="/static/images/{{recomov.poster}}" title="Movies Pro" class="img-responsive" alt=" ">
-									<div class="w3l-action-icon"><i class="fa fa-play-circle-o" aria-hidden="true"></i></div>
-								</a>
+									<a href="{{url_for('detail',movie_id=recomov.movie_id)}}" class="hvr-sweep-to-bottom"><img name="pic" src="/static/images/{{recomov.poster}}" style="width:240px; height:300px" title="Movies Pro" class="img-responsive" alt=" ">
+										<div class="w3l-action-icon"><i class="fa fa-play-circle-o" aria-hidden="true"></i></div>
+									</a>
 									<div class="mid-1 agileits_w3layouts_mid_1_home">
 										<div class="w3l-movie-text">
-											<h6><a href="single.html">{{recomov.movie_name}}</a></h6>
+											<h6>{{recomov.movie_name}}</h6>
 										</div>
-										<div class="mid-2 agile_mid_2_home">
-											<p>{{recomov.premiere_date}}</p>
-											<div class="block-stars">
-												<ul class="w3l-ratings">
+										<div text-Align="center">
+											<p margin-left="auto;" margin-right="auto;">{{recomov.premiere_date}}</p>
+											<div>
+												<ul class="w3l-ratings" float="left;">
 													{% if recomov.score > 0%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if recomov.score < 2 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if recomov.score > 2%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if recomov.score < 4 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if recomov.score > 4%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if recomov.score < 6 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if recomov.score > 6%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if recomov.score < 8 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
 													{% if recomov.score > 8%}
-													<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% if recomov.score < 10 %}
+														<li><a href="#"><i class="fa fa-star-half-o" aria-hidden="true"></i></a></li>
+														{% else %}
+														<li><a href="#"><i class="fa fa-star" aria-hidden="true"></i></a></li>
+														{% endif %}
 													{% else %}
 													<li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
 													{% endif %}
@@ -331,11 +423,10 @@ Human beings lived on Azeroth for generations, and the orcs worked hard on the l
 											<div class="clearfix"></div>
 										</div>
 									</div>
-								<div class="ribben one">
-									<p>NEW</p>
+									<div class="ribben one">
+										<p>NEW</p>
+									</div>
 								</div>
-						</div>
-
 						{% endfor %}
 						<div class="clearfix"></div>
 						</div>
@@ -348,3 +439,4 @@ Human beings lived on Azeroth for generations, and the orcs worked hard on the l
 </body>
 </html>
 {% endblock %}
+<script type="text/javascript">

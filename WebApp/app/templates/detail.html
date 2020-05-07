@@ -12,13 +12,13 @@
 </style>
 <body>
 
-<div id="LEFT" style="position:relative;left:26%;float:left">
+<div id="LEFT" style="position:relative;left:24%;float:left">
 {% if movie.poster %}<br><br>
 <img class="img-rounded profile-thumbnail" src="../static/images/{{movie.poster}}" width="330" height="400"><br><br><br>
 {% endif %}
 </div><br><br>
 
-<div id="RIGHT" style="position:relative;left:40%;float:left">
+<div id="RIGHT" style="position:relative;left:38%;float:left">
   <h1><br>
       {{ movie.movie_name }} </h1> &nbsp &nbsp &nbsp <h4><span class="label label-default">{{ movie.special_effect }}
     </span></h4>
@@ -33,8 +33,9 @@
   <br><br><br><br><br>
    <button class="btn btn-danger btn-sm">
     Rank Star: {{ movie.score }}
-   </button> &nbsp &nbsp &nbsp &nbsp &nbsp <a href="{{url_for('comment',movie_id=movie.movie_id)}}">
-<span class="label label-default">View comments</span></a>
+   </button> &nbsp &nbsp &nbsp <a href="/view_comment/{{movie.movie_id}}">
+    <span class="label label-default">View comments</span></a> &nbsp &nbsp &nbsp
+
 </p><br>
 </div>
 <br><br><br><br><br><br>

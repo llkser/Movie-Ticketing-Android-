@@ -9,7 +9,6 @@ Relationship = db.Table('relationship', db.Model.metadata,
                         db.Column('company_name', db.String(32), db.ForeignKey('cinema.company_name'))
                         )
 
-
 @login_manager.user_loader
 def get_user(ident):
   return User.query.get(int(ident))
@@ -83,6 +82,7 @@ class Order(db.Model):
     ticket_key = db.Column(db.String(256), index=True)
     order_user = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     order_movie = db.Column(db.Integer, db.ForeignKey('movie.movie_id'))
+    comments = db.relationship('Comment', backref='orders', lazy='dynamic')
 
 
 class Cinema(db.Model):
@@ -106,5 +106,12 @@ class Comment(db.Model):
     __tablename__ = 'comment'
     comment_id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
+    mark = db.Column(db.Integer)
     author_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     movie_id = db.Column(db.Integer, db.ForeignKey('movie.movie_id'))
+    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'))
+
+
+class Version(db.Model):
+    __tablename__ = 'version'
+    version_number = db.Column(db.String(32), primary_key=True)

@@ -75,17 +75,13 @@
 								{{ form.poster(cols='80',class_='form-control') }}<br>
 								{% for error in form.poster.errors %}
 									<span style="color: red;">[{{ error }}]</span>
-								{% endfor %}<br>
+								{% endfor %}<br><br>
 								Introduction:<br>
 								{{ form.introduction(cols='80',rows='10',class_='form-control') }}<br>
 								{% for error in form.introduction.errors %}
 									<span style="color: red;">[{{ error }}]</span>
-								{% endfor %}<br>
-								Comments:<br>
-								{{ form.comments(cols='80',rows='10',class_='form-control') }}<br>
-								{% for error in form.comments.errors %}
-									<span style="color: red;">[{{ error }}]</span>
-								{% endfor %}<br>
+								{% endfor %}<br><br><br>
+
 								<input type="submit"  value="Submit">
 							</div>
 
