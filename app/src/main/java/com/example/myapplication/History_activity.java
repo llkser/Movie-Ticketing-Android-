@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ import okhttp3.Response;
 
 public class History_activity extends AppCompatActivity {
     private AndroidDatabase androidDatabase;
-
+    public static List<Adapater_common_type> list=new ArrayList<Adapater_common_type>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +47,8 @@ public class History_activity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("History");
-
+        if(list.size()>0)
+            list.clear();
         RequestFororderInform(0);
     }
 
@@ -54,7 +56,7 @@ public class History_activity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     WaterFallAdapter mAdapter;
 
-    private void init(List<Adapater_common_type> list) {
+    private void init() {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.order_recycler_view);
         mLayoutManager = new GridLayoutManager(History_activity.this, 1);
@@ -68,7 +70,7 @@ public class History_activity extends AppCompatActivity {
         OkHttpClient client = new OkHttpClient();
         androidDatabase = new AndroidDatabase(this, "Shield.db", null, 1);
         final SQLiteDatabase db = androidDatabase.getWritableDatabase();
-        final List<Adapater_common_type> list = new ArrayList<>();
+
         FormBody.Builder formBuilder = new FormBody.Builder();
 
         Cursor cursor = db.rawQuery("select * from User where Islogin=?", new String[]{"1"});
@@ -131,17 +133,24 @@ public class History_activity extends AppCompatActivity {
                                 }
                                 if (arr[jsonObject.getInt("order_id")] != 1) {
                                     Log.d("okhttp_error", String.valueOf(jsonObject.getInt("order_id")) + " " + cursor.getCount());
-                                    db.execSQL("insert into Orders values(?,?,?,?,?,?)"
+                                    db.execSQL("insert into Orders values(?,?,?,?,?,?,?)"
                                             , new Object[]{jsonObject.getInt("order_id"), jsonObject.getString("order_date"),
                                                     jsonObject.getString("seat_number"), jsonObject.getString("ticket_key"),
-                                                    jsonObject.getString("order_user"), jsonObject.getString("order_movie")
+                                                    jsonObject.getString("order_user"), jsonObject.getInt("comments"),jsonObject.getString("order_movie")
 
                                             });
+                                }
+                                else
+                                {
+                                    ContentValues values = new ContentValues();
+                                    values.put("comments", jsonObject.getInt("comments"));
+                                    db.update("Orders", values, "order_id=?",
+                                            new String[]{String.valueOf(jsonObject.getInt("order_id"))});
                                 }
                             }
 
                             Cursor cursor2;
-
+                            Cursor cursor3;
                             final SQLiteDatabase db1 = androidDatabase.getWritableDatabase();
 
                             cursor = db1.rawQuery("select * from Orders", new String[]{});
@@ -166,12 +175,17 @@ public class History_activity extends AppCompatActivity {
                                             movie_order.id = cursor.getString(cursor.getColumnIndex("order_movie"));
                                             movie_order.order_id=cursor.getString(cursor.getColumnIndex("order_id"));
                                             movie_order.watched = 1;
+
+                                            if (cursor.getInt(cursor.getColumnIndex("comments"))==1)
+                                                movie_order.is_commented=true;
+                                            else
+                                                movie_order.is_commented=false;
+
                                             if (mode == 0)
                                                 list.add(movie_order);
                                             else {
-                                                mAdapter.mData.add(movie_order);
-                                                mAdapter.notifyItemChanged(mAdapter.mData.size());
-                                                mAdapter.notifyItemRangeChanged(mAdapter.mData.size(), 1);
+                                                list.add(movie_order);
+                                                mAdapter.notifyDataSetChanged();
                                             }
                                         }
 
@@ -180,18 +194,24 @@ public class History_activity extends AppCompatActivity {
 
                             }
                             if (mode == 0)
-                                init(list);
+                                init();
 
                             Log.d("okhttp_error", "end of thread");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                     }
 
                 });
+
             }
+
         });
+
+
         return list;
+
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -202,5 +222,13 @@ public class History_activity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        list.clear();
+        mAdapter.notifyDataSetChanged();
+        RequestFororderInform(1);
     }
 }

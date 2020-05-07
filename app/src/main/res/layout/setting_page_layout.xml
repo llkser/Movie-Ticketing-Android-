@@ -12,6 +12,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="30dp"
+        android:textColor="#ff0000"
         android:text="Change password" />
     <RelativeLayout
         android:layout_width="match_parent"
@@ -71,10 +72,14 @@
             android:textSize="15sp"
             android:gravity="center"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="10dp"
             android:paddingTop="5dp"
-            android:text="For more information, please visit our website:
-            http://nightmaremlp.pythonanywhere.com/"/>
+            android:text="For more information and downloading latest application, please visit our website:"/>
+        <TextView
+            android:id="@+id/setting_website"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:gravity="center" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

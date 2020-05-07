@@ -115,6 +115,7 @@ final class Adapter_order implements Adapater_common_type,Serializable{
     public String id;
     public String order_id;
     public int watched;
+    public boolean is_commented;
     @Override
     public int get_widget_type()
     {
@@ -127,6 +128,7 @@ final class Adapter_comments implements Adapater_common_type,Serializable{
     public String user_img;
     public String user_name;
     public String comment;
+
     public float mark;
     @Override
     public int get_widget_type()

@@ -48,7 +48,6 @@ public class Order_page_activity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Tickets");
-
         RequestFororderInform(0);
     }
     GridLayoutManager mLayoutManager;
@@ -86,7 +85,9 @@ public class Order_page_activity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, final IOException e) {
                 runOnUiThread(new Runnable() {
+
                     @Override
+
                     public void run() {
                         Log.d("okhttp_error", e.getMessage());
                         Toast error_toast = Toast.makeText(Order_page_activity.this, "Could not connect to server", Toast.LENGTH_LONG);
@@ -103,7 +104,9 @@ public class Order_page_activity extends AppCompatActivity {
                 final String res = response.body().string();
 
                 runOnUiThread(new Runnable() {
+
                     @Override
+
                     public void run() {
                         try {
 
@@ -128,10 +131,12 @@ public class Order_page_activity extends AppCompatActivity {
                                 }
                                 if (arr[jsonObject.getInt("order_id")]!=1) {
                                     Log.d("okhttp_error", String.valueOf(jsonObject.getInt("order_id")) + " " + cursor.getCount());
-                                    db.execSQL("insert into Orders values(?,?,?,?,?,?)"
+                                    db.execSQL("insert into Orders values(?,?,?,?,?,?,?)"
                                             , new Object[]{jsonObject.getInt("order_id"), jsonObject.getString("order_date"),
                                                     jsonObject.getString("seat_number"), jsonObject.getString("ticket_key"),
-                                                    jsonObject.getString("order_user"), jsonObject.getString("order_movie")
+                                                    jsonObject.getString("order_user"),jsonObject.getInt("comments"),
+                                                    jsonObject.getString("order_movie")
+
 
                                             });
                                 }
@@ -182,10 +187,16 @@ public class Order_page_activity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                     }
+
                 });
+
             }
+
         });
+
+
         return list;
 
     }

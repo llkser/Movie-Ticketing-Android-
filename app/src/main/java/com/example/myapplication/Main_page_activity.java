@@ -84,7 +84,6 @@ public class Main_page_activity extends AppCompatActivity  {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSION_REQUEST:
-
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -116,12 +115,15 @@ public class Main_page_activity extends AppCompatActivity  {
         Cursor cursor = db.rawQuery("select * from User where Islogin=?",new String[]{"1"});
         if(cursor.getCount()==0)
             Toast.makeText(this,"No user login!",Toast.LENGTH_SHORT).show();
+        if(movie_list.size()>0)
+            movie_list.clear();
         RequestForMovieInform(0) ;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
-    {  menu.clear();
+    {
+        menu.clear();
         getMenuInflater().inflate(R.menu.main_page_menu,menu);
         MenuItem menuItem = menu.findItem(R.id.app_bar_search);
         mSearchView = (SearchView) menuItem.getActionView();//加载searchview
@@ -190,7 +192,6 @@ public class Main_page_activity extends AppCompatActivity  {
         } else {
             count = 1;
         }
-
         return count;
     }
     GridLayoutManager mLayoutManager;
@@ -326,10 +327,6 @@ public class Main_page_activity extends AppCompatActivity  {
                                 movie_list.add(banner);
                                 if (mode==1)
                                     mAdapter.notifyDataSetChanged();
-
-
-
-
                                 final SQLiteDatabase db1 = androidDatabase.getWritableDatabase();
                                 cursor = db1.rawQuery("select * from Movie where scene='0' ", new String[]{});
                                 if(cursor.moveToFirst()) {
@@ -348,43 +345,29 @@ public class Main_page_activity extends AppCompatActivity  {
                                                 movie_list.add(movie_card);
                                                 if (mode==1)
                                                     mAdapter.notifyDataSetChanged();
-
-
                                             }
-
                                     }
                                     while(cursor.moveToNext());
-
                                 }
                                 if (mode == 0)
                                 init();
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }/* catch (ParseException e) {
                                 e.printStackTrace();
                             }*/
-
                         }
 
                     });
-
                 }
-
             });
-
-
         return list;
-
     }
 
     private List<Adapater_common_type> search_from_database(String keyword)
     {
         final List<Adapater_common_type> list = new ArrayList<>();
-
         SQLiteDatabase db = androidDatabase.getWritableDatabase();
-
 
         Cursor cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 and scene=?  --case-insensitive", new String[]{keyword,"0"});
         if(keyword=="")
@@ -407,8 +390,6 @@ public class Main_page_activity extends AppCompatActivity  {
                 }
                 else
                     list.add(movie_card);
-
-
             }
             while(cursor.moveToNext());
         }
@@ -422,6 +403,5 @@ public class Main_page_activity extends AppCompatActivity  {
         mAdapter.notifyDataSetChanged();
         RequestForMovieInform(1);
     }
-
 }
 

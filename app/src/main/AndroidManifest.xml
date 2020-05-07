@@ -67,6 +67,9 @@
         <activity
             android:name=".Setting_page_activity"
             android:theme="@style/AppTheme.ActionBar.Userpage.Transparent" />
+        <activity
+            android:name=".Password_change_page_activity"
+            android:theme="@style/AppTheme.ActionBar.Userpage.Transparent" />
     </application>
 
 </manifest>

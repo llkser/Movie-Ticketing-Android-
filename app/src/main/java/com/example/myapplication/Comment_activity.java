@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,11 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +59,8 @@ public class Comment_activity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             username = cursor.getString(cursor.getColumnIndex("Username"));
         }
+
+
         cursor = db.rawQuery("select * from Movie WHERE instr(upper(movie_name), upper(?)) > 0 order by movie_id  --case-insensitive", new String[]{moviename});
         if (cursor.moveToFirst()) {
 
@@ -177,11 +182,12 @@ public class Comment_activity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     final String res = response.body().string();
                     @Override
-
                     public void run() {
+                        Toast error_toast = Toast.makeText(Comment_activity.this, "Comment successfully!", Toast.LENGTH_LONG);
+                        error_toast.setGravity(Gravity.CENTER, 0, 0);
+                        error_toast.show();
+                        finish();
                     }
-
-
                 });
             }
         });

@@ -140,11 +140,18 @@ public class WaterFallAdapter extends RecyclerView.Adapter {
                     intent.putExtra("movie_name",order.movie);
                     intent.putExtra("order_id",order.order_id);
                     mContext.startActivity(intent);
+
+
                 }
             });
+
             if(order.watched==0)
                 order_holder.comment.setVisibility(View.GONE);
-
+            else
+                if(order.is_commented==true)
+                    order_holder.comment.setText("EDIT");
+                else
+                    order_holder.comment.setText("COMMENT");
         }
         else if(holder instanceof MovieCommentViewHolder)
         {
